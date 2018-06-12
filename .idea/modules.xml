@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/huawei.spider.center.jar/huawei.spider.center.jar.iml" filepath="$PROJECT_DIR$/huawei.spider.center.jar/huawei.spider.center.jar.iml" />
       <module fileurl="file://$PROJECT_DIR$/spider.iml" filepath="$PROJECT_DIR$/spider.iml" />
     </modules>
   </component>

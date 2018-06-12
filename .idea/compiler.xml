@@ -6,11 +6,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="spider" />
+        <module name="huawei.spider.center.jar" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="spider" target="1.5" />
+      <module name="center" target="1.7" />
+      <module name="huawei.spider.center.jar" target="1.8" />
+      <module name="spider" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

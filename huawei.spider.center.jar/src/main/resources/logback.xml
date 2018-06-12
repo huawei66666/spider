@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+
+    <property scope="system" name="SYSTEM_NAME" value="spider-center"/>
+    <property scope="system" name="APP_VERSION" value="0.0.1-SNAPSHOT"/>
+    <property scope="system" name="LOG_DIR" value="/data/study/logs"/>
+
+    <!-- 基本按时间滚动的策略 -->
+    <appender name="defaultLogFile"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/${SYSTEM_NAME}/spider.default.log</file>
+        <!-- 只有大于等于本级别才记录日志 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/${SYSTEM_NAME}/spider.default.%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+            <!-- 保留 30天数据，默认无限 -->
+            <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%date{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ROOT_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/${SYSTEM_NAME}/system.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/${SYSTEM_NAME}/system.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- 保留 30天数据，默认无限 -->
+            <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>5000MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%-20(%d{yyy-MM-dd HH:mm:ss.SSS} [%X{requestId}]) %-5level - %logger{80} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="CONSOLE_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SPIDER_CENTER_SERVICE_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/${SYSTEM_NAME}/spider.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/${SYSTEM_NAME}/spider.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- 保留 30天数据，默认无限 -->
+            <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>5000MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%-20(%d{yyy-MM-dd HH:mm:ss.SSS} [%X{requestId}]) %-5level - %logger{80} - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="SPIDER_CENTER_ERROR_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/${SYSTEM_NAME}/spider.error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/${SYSTEM_NAME}/spider.error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- 保留 30天数据，默认无限 -->
+            <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>5000MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%-20(%d{yyy-MM-dd HH:mm:ss.SSS} [%X{requestId}]) %-5level - %logger{80} - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!--同一个日志文件-->
+    <appender name="SPIDER_CENTER_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/${SYSTEM_NAME}/spider.all.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/${SYSTEM_NAME}/spider.all.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- 保留 30天数据，默认无限 -->
+            <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>5000MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%-20(%d{yyy-MM-dd HH:mm:ss.SSS} [%X{requestId}]) %-5level - %logger{80} - %msg%n</pattern>
+        </encoder>
+        <!--<filter class="ch.qos.logback.classic.filter.LevelFilter">-->
+        <!--<level>ERROR</level>-->
+        <!--<onMatch>ACCEPT</onMatch>-->
+        <!--<onMismatch>DENY</onMismatch>-->
+        <!--</filter>-->
+    </appender>
+
+    <logger name="jdbc.sqltiming" level="INFO"/>
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.quartz" level="ERROR"/>
+    <logger name="org.dozer" level="ERROR"/>
+    <logger name="org.apache" level="ERROR"/>
+    <logger name="org.mybatis.spring" level="ERROR"/>
+    <logger name="com.huawei.spider" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE_APPENDER"/>
+        <appender-ref ref="SPIDER_CENTER_ERROR_APPENDER"/>
+        <appender-ref ref="SPIDER_CENTER_SERVICE_APPENDER"/>
+    </logger>
+
+    <!--<appender-ref ref="SPIDER_CENTER_APPENDER"/>-->
+    <!--</logger>-->
+
+    <root level="ERROR INFO DEBUG">
+        <appender-ref ref="ROOT_APPENDER"/>
+        <appender-ref ref="defaultLogFile"/>
+    </root>
+</configuration>
