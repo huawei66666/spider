@@ -172,11 +172,7 @@
     <!--<bean id="redisDao" class="com.lianj.framework.cache.impl.RedisDao"/>-->
     <!--<bean id="cache" class="com.lianj.framework.cache.impl.RedisCacheService"/>-->
 
-    <!--<import resource="classpath:lianj-spider-center-dubbo.xml"/>-->
-    <import resource="classpath:lianj-spider-center-redis.xml"/>
-
-    <!--<import resource="classpath*:conf/lianj-spider-*-center-dubbo.xml"/>-->
-    <!--<import resource="classpath*:conf/lianj-spider-*-center-service.xml"/>-->
+    <import resource="classpath:huawei-spider-center-redis.xml"/>
 
     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
         <property name="dataSource" ref="dataSource" />
