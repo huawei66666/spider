@@ -9,8 +9,7 @@
 	</settings>
 
 	<plugins>
-		<plugin interceptor="MySQLDialect">
-		</plugin>
+		<plugin interceptor="MySQLDialect"></plugin>
 	</plugins>
 
 </configuration>

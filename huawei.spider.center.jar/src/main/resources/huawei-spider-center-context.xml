@@ -12,7 +12,7 @@
      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
        default-lazy-init="false">
 
-    <context:component-scan base-package="com.huawei.spider"/>
+    <!--<context:component-scan base-package="com.huawei.spider"/>-->
 
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
@@ -64,62 +64,62 @@
         <property name="filters" value="${druid.filters}"/>
     </bean>
 
-    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="configLocation" value="classpath:mybatis-config.xml"/>
-        <property name="databaseIdProvider">
-            <bean class="org.apache.ibatis.mapping.VendorDatabaseIdProvider">
-                <property name="properties">
-                    <props>
-                        <prop key="MySQL">mysql</prop>
-                    </props>
-                </property>
-            </bean>
-        </property>
-        <property name="mapperLocations">
-            <array>
-                <value>classpath*:conf/**/*Mapper.xml</value>
-            </array>
-        </property>
-    </bean>
+    <!--<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">-->
+        <!--<property name="dataSource" ref="dataSource"/>-->
+        <!--<property name="configLocation" value="classpath:mybatis-config.xml"/>-->
+        <!--<property name="databaseIdProvider">-->
+            <!--<bean class="org.apache.ibatis.mapping.VendorDatabaseIdProvider">-->
+                <!--<property name="properties">-->
+                    <!--<props>-->
+                        <!--<prop key="MySQL">mysql</prop>-->
+                    <!--</props>-->
+                <!--</property>-->
+            <!--</bean>-->
+        <!--</property>-->
+        <!--<property name="mapperLocations">-->
+            <!--<array>-->
+                <!--<value>classpath*:conf/**/*Mapper.xml</value>-->
+            <!--</array>-->
+        <!--</property>-->
+    <!--</bean>-->
 
-    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.lianj.spider.proxy.center.dao,com.lianj.spider.task.center.dao,com.lianj.spider.resource.center.dao,com.lianj.spider.project.center.dao"/>
-        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
-    </bean>
+    <!--<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">-->
+        <!--<property name="basePackage" value="com.lianj.spider.proxy.center.dao,com.lianj.spider.task.center.dao,com.lianj.spider.resource.center.dao,com.lianj.spider.project.center.dao"/>-->
+        <!--<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>-->
+    <!--</bean>-->
 
-    <bean id="transactionManager"
-          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
+    <!--<bean id="transactionManager"-->
+          <!--class="org.springframework.jdbc.datasource.DataSourceTransactionManager">-->
+        <!--<property name="dataSource" ref="dataSource"/>-->
+    <!--</bean>-->
 
-    <tx:advice id="transactionAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="add*" propagation="REQUIRED"/>
-            <tx:method name="insert*" propagation="REQUIRED"/>
-            <tx:method name="save*" propagation="REQUIRED"/>
-            <tx:method name="update*" propagation="REQUIRED"/>
-            <tx:method name="modify*" propagation="REQUIRED"/>
-            <tx:method name="edit*" propagation="REQUIRED"/>
-            <tx:method name="delete*" propagation="REQUIRED"/>
-            <tx:method name="remove*" propagation="REQUIRED"/>
-            <tx:method name="set*" propagation="REQUIRED"/>
-            <tx:method name="cancel*" propagation="REQUIRED"/>
-            <tx:method name="batchInsert*" propagation="REQUIRED"/>
-            <tx:method name="batchUpdate*" propagation="REQUIRED"/>
+    <!--<tx:advice id="transactionAdvice" transaction-manager="transactionManager">-->
+        <!--<tx:attributes>-->
+            <!--<tx:method name="add*" propagation="REQUIRED"/>-->
+            <!--<tx:method name="insert*" propagation="REQUIRED"/>-->
+            <!--<tx:method name="save*" propagation="REQUIRED"/>-->
+            <!--<tx:method name="update*" propagation="REQUIRED"/>-->
+            <!--<tx:method name="modify*" propagation="REQUIRED"/>-->
+            <!--<tx:method name="edit*" propagation="REQUIRED"/>-->
+            <!--<tx:method name="delete*" propagation="REQUIRED"/>-->
+            <!--<tx:method name="remove*" propagation="REQUIRED"/>-->
+            <!--<tx:method name="set*" propagation="REQUIRED"/>-->
+            <!--<tx:method name="cancel*" propagation="REQUIRED"/>-->
+            <!--<tx:method name="batchInsert*" propagation="REQUIRED"/>-->
+            <!--<tx:method name="batchUpdate*" propagation="REQUIRED"/>-->
 
-            <tx:method name="get*" propagation="SUPPORTS"/>
-            <tx:method name="find*" propagation="SUPPORTS"/>
-            <tx:method name="load*" propagation="SUPPORTS"/>
-            <tx:method name="search*" propagation="SUPPORTS"/>
+            <!--<tx:method name="get*" propagation="SUPPORTS"/>-->
+            <!--<tx:method name="find*" propagation="SUPPORTS"/>-->
+            <!--<tx:method name="load*" propagation="SUPPORTS"/>-->
+            <!--<tx:method name="search*" propagation="SUPPORTS"/>-->
 
-            <tx:method name="*" propagation="SUPPORTS"/>
-        </tx:attributes>
-    </tx:advice>
-    <aop:config>
-        <aop:pointcut id="transactionPointcut" expression="execution(* com.huawei.spider.*.center.impl.*.*(..))"/>
-        <aop:advisor pointcut-ref="transactionPointcut" advice-ref="transactionAdvice"/>
-    </aop:config>
+            <!--<tx:method name="*" propagation="SUPPORTS"/>-->
+        <!--</tx:attributes>-->
+    <!--</tx:advice>-->
+    <!--<aop:config>-->
+        <!--<aop:pointcut id="transactionPointcut" expression="execution(* com.huawei.spider.*.center.impl.*.*(..))"/>-->
+        <!--<aop:advisor pointcut-ref="transactionPointcut" advice-ref="transactionAdvice"/>-->
+    <!--</aop:config>-->
 
     <bean id="druid-stat-interceptor" class="com.alibaba.druid.support.spring.stat.DruidStatInterceptor">
     </bean>
@@ -127,7 +127,7 @@
           scope="prototype">
         <property name="patterns">
             <list>
-                <value>com.lianj.spider.*.center.impl.*</value>
+                <value>com.huawei.spider.*</value>
             </list>
         </property>
     </bean>
@@ -172,7 +172,7 @@
     <!--<bean id="redisDao" class="com.lianj.framework.cache.impl.RedisDao"/>-->
     <!--<bean id="cache" class="com.lianj.framework.cache.impl.RedisCacheService"/>-->
 
-    <import resource="classpath:huawei-spider-center-redis.xml"/>
+    <!--<import resource="classpath:huawei-spider-center-redis.xml"/>-->
 
     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
         <property name="dataSource" ref="dataSource" />
