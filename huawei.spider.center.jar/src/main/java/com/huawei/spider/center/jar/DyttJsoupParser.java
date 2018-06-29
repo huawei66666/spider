@@ -12,14 +12,13 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * 功能：Jsoup解析
- * 作者：laihuawei(laihuawei@lianj.com)
+ * 功能：电影天堂解析器
+ * 作者：xiaowei
  * 日期：2018年06月2018/6/25日 16:21
- * 版权所有：广东联结网络技术有限公司 版权所有(C)
  */
-public class JsoupParser {
+public class DyttJsoupParser {
 
-    private static final Logger logger = LoggerFactory.getLogger(JsoupParser.class);
+    private static final Logger logger = LoggerFactory.getLogger(DyttJsoupParser.class);
 
     public static void main(String[] args) {
         parseHtml();

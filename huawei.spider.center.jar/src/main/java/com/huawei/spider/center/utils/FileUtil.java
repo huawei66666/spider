@@ -10,9 +10,7 @@ import java.io.PrintStream;
 
 /**
  * 功能：文件工具类
- * 作者：laihuawei(laihuawei@lianj.com)
  * 日期：2018年06月2018/6/25日 16:41
- * 版权所有：广东联结网络技术有限公司 版权所有(C)
  */
 public class FileUtil {
 

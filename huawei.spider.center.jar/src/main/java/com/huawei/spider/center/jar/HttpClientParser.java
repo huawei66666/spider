@@ -21,10 +21,7 @@ import java.util.Date;
 
 /**
  * 功能：解析器
- * 描述：解析器
- * 作者：laihuawei(laihuawei@lianj.com)
  * 日期：2018年06月2018/6/12日 14:51
- * 版权所有：广东联结网络技术有限公司 版权所有(C)
  */
 public class HttpClientParser {
 
