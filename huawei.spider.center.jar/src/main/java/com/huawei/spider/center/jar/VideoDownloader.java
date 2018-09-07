@@ -1,5 +1,6 @@
 package com.huawei.spider.center.jar;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,14 +22,19 @@ public class VideoDownloader {
     /**
      * 下载文件到本地
      *
-     * @param url      被下载的文件地址
-     * @param filename 本地文件名
-     * @param timeout  超时时间毫秒
+     * @param url        被下载的文件地址
+     * @param outputPath 本地文件名
+     * @param timeout    超时时间毫秒
      * @throws Exception 各种异常
      */
-    public void download(String url, String filename, int timeout) {
+    public void download(String url, String outputPath, int timeout) {
         FileOutputStream outputStream = null;
         BufferedInputStream inputStream = null;
+        if (StringUtils.isBlank(url) || url.indexOf(".") == -1) {
+            System.out.println("无效的地址");
+            return;
+        }
+        String filename = outputPath + url.substring(url.lastIndexOf("/"));
         try {
             File file = new File(filename);
             if (file.exists()) {
@@ -61,13 +67,21 @@ public class VideoDownloader {
 
             byte[] buffer = new byte[1024];
             int length = inputStream.read(buffer);
-            int percent = 0;
+            int total = 0;
+            double p = 0;
             while (length != -1) {
                 outputStream.write(buffer, 0, length);
+                double temp = Double.parseDouble(df.format(((double) total / contentLength) * 100));
+                if(temp > p){
+                    String percent = df.format(temp) + "%";
+                    String loaded = df.format((double) total / (1024 * 1024));
+                    String remaind = df.format((double) (contentLength - total) / (1024 * 1024));
+                    String process = "进度：" + percent + "   已下载：" + loaded + "MB" + "   剩余：" + remaind + "MB";
+                    System.out.println(process);
+                    p = temp;
+                }
                 length = inputStream.read(buffer);
-                percent += length;
-                String process = percent < 1024 ? "已下载：" + percent + "KB" : "已下载：" + (percent / 1024) + "MB";
-                System.out.println(process);
+                total += length;
             }
             outputStream.flush();
 
@@ -79,22 +93,17 @@ public class VideoDownloader {
             logger.error("[VideoUtil:download]:\n" + " VIDEO URL：" + url + " \n NEW FILENAME:" + filename + " DOWNLOAD FAILED!! ");
             e.printStackTrace();
         } finally {
-            // 完毕，关闭所有链接
-            if (outputStream != null) {
-                try {
+            try {
+                // 完毕，关闭所有链接
+                if (outputStream != null) {
                     outputStream.close();
-                } catch (IOException e) {
-                    logger.error("下载异常", e);
-                    e.printStackTrace();
                 }
-            }
-            if (inputStream != null) {
-                try {
+                if (inputStream != null) {
                     inputStream.close();
-                } catch (IOException e) {
-                    logger.error("下载异常", e);
-                    e.printStackTrace();
                 }
+            } catch (IOException e) {
+                logger.error("下载异常", e);
+                e.printStackTrace();
             }
         }
     }

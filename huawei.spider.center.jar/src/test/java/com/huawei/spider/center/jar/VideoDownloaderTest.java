@@ -15,8 +15,8 @@ public class VideoDownloaderTest {
         String url = "https://aliuwmp3.changba.com/userdata/video/4DA2C4951547C4539C33DC5901307461.mp4";
         VideoDownloader downloader = new VideoDownloader();
 
-        String filename = "D:/videos/my.mp4";
-        downloader.download(url, filename, 20000);
+        String outputPath = "/mydoc/videos";
+        downloader.download(url, outputPath, 20000);
     }
 
 }
