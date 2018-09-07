@@ -21,18 +21,7 @@ public class DyttJsoupParser {
     private static final Logger logger = LoggerFactory.getLogger(DyttJsoupParser.class);
 
     public static void main(String[] args) {
-
-
-        String areaName = "广东省";
-        if (areaName.indexOf("省") != -1) {
-            areaName = areaName.substring(areaName.indexOf("省") + 1);
-        }
-
-        System.out.println(areaName);
-
-
-//        parseHtml();
-//        getLinks();
+        parseHtml();
     }
 
     private static void parseHtml() {
@@ -95,13 +84,11 @@ public class DyttJsoupParser {
      */
     public static String getLinks(String url) {
         try {
-//            String url = "http://www.dytt8.net/html/gndy/dyzz/20180611/56997.html";
             Document doc = Jsoup.connect(url).get();
             Elements a = doc.select("td[style=\"WORD-WRAP: break-word\"][bgcolor=\"#fdfddf\"] a");
             String downloadUrl = a.attr("href");
             System.out.println(downloadUrl);
             return downloadUrl;
-//            System.out.println(doc.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
