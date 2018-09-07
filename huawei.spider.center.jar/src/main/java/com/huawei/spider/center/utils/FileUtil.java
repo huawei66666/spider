@@ -41,4 +41,34 @@ public class FileUtil {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 写到文件
+     *
+     * @param content
+     */
+    public static void writeToFile(String localPath, String content) {
+        try {
+            if (StringUtils.isEmpty(localPath)) {
+                return;
+            }
+            if (StringUtils.isEmpty(content)) {
+                System.out.println("文件内容为空！");
+                logger.error("文件内容为空！");
+                return;
+            }
+            File file = new File(localPath);
+            if (file.exists()) {
+//                PrintStream printStream = new PrintStream(new FileOutputStream(file), true, "UTF-8");
+                PrintStream printStream = new PrintStream(new FileOutputStream(file));
+                printStream.print(content);
+                printStream.close();
+            }
+        } catch (Exception e) {
+            logger.error("内容写到文件失败！", e);
+            e.printStackTrace();
+        }
+    }
+
+
 }

@@ -21,7 +21,17 @@ public class DyttJsoupParser {
     private static final Logger logger = LoggerFactory.getLogger(DyttJsoupParser.class);
 
     public static void main(String[] args) {
-        parseHtml();
+
+
+        String areaName = "广东省";
+        if (areaName.indexOf("省") != -1) {
+            areaName = areaName.substring(areaName.indexOf("省") + 1);
+        }
+
+        System.out.println(areaName);
+
+
+//        parseHtml();
 //        getLinks();
     }
 
