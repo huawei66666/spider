@@ -28,7 +28,7 @@ public class FileUtil {
                 logger.error("文件内容为空！");
                 return;
             }
-            String localPath = "D:/dytt.txt";
+            String localPath = "/mydoc/dytt.txt";
             File file = new File(localPath);
             if (file.exists()) {
 //                PrintStream printStream = new PrintStream(new FileOutputStream(file), true, "UTF-8");
@@ -58,12 +58,16 @@ public class FileUtil {
                 return;
             }
             File file = new File(localPath);
-            if (file.exists()) {
-//                PrintStream printStream = new PrintStream(new FileOutputStream(file), true, "UTF-8");
-                PrintStream printStream = new PrintStream(new FileOutputStream(file));
-                printStream.print(content);
-                printStream.close();
+            if (!file.exists()) {
+                file.createNewFile();
             }
+
+            System.out.println("正在写入文件...");
+//            PrintStream printStream = new PrintStream(new FileOutputStream(file), true, "UTF-8");
+            PrintStream printStream = new PrintStream(new FileOutputStream(file));
+            printStream.print(content);
+            printStream.close();
+            System.out.println("写入文件完成！");
         } catch (Exception e) {
             logger.error("内容写到文件失败！", e);
             e.printStackTrace();

@@ -71,7 +71,8 @@ public class DyttJsoupParser {
                 html += print + "\n";
             }
 
-            FileUtil.writeToFile(html);
+            String localPath = "/mydoc/dytt.txt";
+            FileUtil.writeToFile(localPath, html);
         } catch (Exception e) {
             e.printStackTrace();
         }
