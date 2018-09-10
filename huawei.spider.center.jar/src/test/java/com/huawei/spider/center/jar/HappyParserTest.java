@@ -1,5 +1,6 @@
 package com.huawei.spider.center.jar;
 
+import com.huawei.spider.center.parsers.HappyParser;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

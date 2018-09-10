@@ -1,4 +1,4 @@
-package com.huawei.spider.center.jar;
+package com.huawei.spider.center.parsers;
 
 import com.huawei.spider.center.utils.FileUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -41,9 +41,9 @@ public class HappyParser {
                 }
             }
 
-            String localPath = "/mydoc/happy.txt";
             System.out.println("提取完成！");
-
+//            String localPath = "/mydoc/happy.txt";
+            String localPath = "D:/happy.txt";
             FileUtil.writeToFile(localPath, info);// 写入文件
         } catch (Exception e) {
             e.printStackTrace();

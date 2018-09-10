@@ -1,5 +1,6 @@
-package com.huawei.spider.center.thread;
+package com.huawei.spider.center.jar;
 
+import com.huawei.spider.center.thread.ThreadHelper;
 import org.junit.Test;
 
 /**

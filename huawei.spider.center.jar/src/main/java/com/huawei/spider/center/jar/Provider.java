@@ -2,7 +2,6 @@ package com.huawei.spider.center.jar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,19 +16,11 @@ public class Provider {
 
     public static void main(String[] args) {
         try {
-            String profile = "development";
-            if (args != null && args.length > 0) {
-                profile = args[0];
-            }
-            System.setProperty("spring.profiles.active", profile);
-            new ClassPathXmlApplicationContext("huawei-spider-center-context.xml");
             logger.info(new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss]").format(new Date()) + " service server started!");
         } catch (RuntimeException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
             System.exit(1);
         }
-
-//        com.alibaba.dubbo.container.Main.main(args);
     }
 }

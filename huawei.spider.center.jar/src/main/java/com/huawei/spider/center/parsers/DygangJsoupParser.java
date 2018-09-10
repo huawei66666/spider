@@ -1,4 +1,4 @@
-package com.huawei.spider.center.jar;
+package com.huawei.spider.center.parsers;
 
 import com.huawei.spider.center.utils.FileUtil;
 import org.apache.commons.lang3.StringUtils;
