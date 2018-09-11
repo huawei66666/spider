@@ -1,13 +1,12 @@
 package com.huawei.spider.center.downloader;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DecimalFormat;
 
 /**
  * 功能：多线程下载器
@@ -20,118 +19,151 @@ public class MultiTreadDownloader {
     private Logger logger = LoggerFactory.getLogger(MultiTreadDownloader.class);
 
     /**
-     * 下载文件到本地
-     *
-     * @param url        文件地址
-     * @param outputPath 存放路径
-     * @param timeout    超时时间毫秒
-     * @throws Exception 各种异常
+     * 定义下载资源的路径
      */
-    public void download(String url, String outputPath, int timeout) {
-        FileOutputStream outputStream = null;
-        BufferedInputStream inputStream = null;
-        if (StringUtils.isBlank(url) || url.indexOf(".") == -1) {
-            System.out.println("无效的地址");
-            return;
+    private String path;
+    /**
+     * 指定所下载的文件的保存位置
+     */
+    private String targetFile;
+    /**
+     * 定义需要使用多少线程下载资源
+     */
+    private int threadNum;
+    /**
+     * 定义下载的线程对象
+     */
+    private DownThread[] threads;
+    /**
+     * 定义下载的文件的总大小
+     */
+    private int fileSize;
+
+    /**
+     * 构造器
+     *
+     * @param path
+     * @param targetFile
+     * @param threadNum
+     */
+    public MultiTreadDownloader(String path, String targetFile, int threadNum) {
+        this.path = path;
+        this.threadNum = threadNum;
+        threads = new DownThread[threadNum];// 初始化threads数组
+        this.targetFile = targetFile;
+    }
+
+    /**
+     * 下载
+     *
+     * @throws Exception
+     */
+    public void download() throws Exception {
+        URL url = new URL(path);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setConnectTimeout(5 * 1000);
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty(
+                "Accept",
+                "image/gif, image/jpeg, image/pjpeg, image/pjpeg, "
+                        + "application/x-shockwave-flash, application/xaml+xml, "
+                        + "application/vnd.ms-xpsdocument, application/x-ms-xbap, "
+                        + "application/x-ms-application, application/vnd.ms-excel, "
+                        + "application/vnd.ms-powerpoint, application/msword, */*");
+        conn.setRequestProperty("Accept-Language", "zh-CN");
+        conn.setRequestProperty("Charset", "UTF-8");
+        conn.setRequestProperty("Connection", "Keep-Alive");
+
+        // 得到文件大小
+        fileSize = conn.getContentLength();
+        conn.disconnect();
+        int currentPartSize = fileSize / threadNum + 1;//这里不必一定要加1,不加1也可以
+        RandomAccessFile file = new RandomAccessFile(targetFile, "rw");
+        file.setLength(fileSize);// 设置本地文件的大小
+        file.close();
+        for (int i = 0; i < threadNum; i++) {
+            int startPos = i * currentPartSize;// 计算每条线程的下载的开始位置
+            RandomAccessFile currentPart = new RandomAccessFile(targetFile, "rw");// 每个线程使用一个RandomAccessFile进行下载
+            currentPart.seek(startPos);// 定位该线程的下载位置
+            threads[i] = new DownThread(startPos, currentPartSize, currentPart);// 创建下载线程
+            threads[i].start();// 启动下载线程
         }
-        String filename = outputPath + url.substring(url.lastIndexOf("/"));
-        try {
-            File file = new File(filename);
-            if (file.exists()) {
-                file.delete();
-            }
-            if (!file.isDirectory()) {
-                file.createNewFile();//创建文件
-            }
-            File parent = new File(file.getParent());// 输出的文件流
-            parent.mkdirs();
+    }
 
-            URL u = new URL(url);// 构造URL
-            HttpURLConnection connection = (HttpURLConnection) u.openConnection();// 打开连接
-            connection.setConnectTimeout(timeout);
-            connection.setReadTimeout(timeout);
-            connection.connect();
-            if (connection.getResponseCode() != 200) {// 200:请求资源成功
-                System.out.println("资源请求失败, 错误码：" + connection.getResponseCode());
-                return;
-            }
-            int contentLength = connection.getContentLength();
-            if (contentLength == 0 || contentLength == -1) {
-                System.out.println("文件无效或不存在");
-                return;
-            }
+    /**
+     * 获取下载的完成百分比
+     */
+    public double getCompleteRate() {
+        int sumSize = 0;// 统计多条线程已经下载的总大小
+        for (int i = 0; i < threadNum; i++) {
+            sumSize += threads[i].length;
+        }
+        return sumSize * 1.0 / fileSize; // 返回已经完成的百分比
+    }
 
-            DecimalFormat df = new DecimalFormat("0.00");
-            String size = df.format((double) contentLength / (1024 * 1024));
-//            System.out.println("目标文件总大小（bytes）： " + contentLength + "B");
-            System.out.println("目标文件总大小（MB）： " + size + "MB");
+    /**
+     * 下载线程内部类
+     */
+    private class DownThread extends Thread {
+        /**
+         * 当前线程的下载位置
+         */
+        private int startPos;
+        /**
+         * 定义当前线程负责下载的文件大小
+         */
+        private int currentPartSize;
+        /**
+         * 当前线程需要下载的文件块
+         */
+        private RandomAccessFile currentPart;
+        /**
+         * 定义已经该线程已下载的字节数
+         */
+        public int length;
 
-            outputStream = new FileOutputStream(file);
-            inputStream = new BufferedInputStream(connection.getInputStream());// 输入流
+        /**
+         * 构造器
+         *
+         * @param startPos
+         * @param currentPartSize
+         * @param currentPart
+         */
+        public DownThread(int startPos, int currentPartSize, RandomAccessFile currentPart) {
+            this.startPos = startPos;
+            this.currentPartSize = currentPartSize;
+            this.currentPart = currentPart;
+        }
 
-            int total = 0;// 已下载量百分比
-            double p = 0;// 上次下载量百分比
-            int last = 0;// 上次下载量
-            long preTime = System.currentTimeMillis();// 上次下载时间
-            byte[] buffer = new byte[1024];
-            int length = inputStream.read(buffer);
-            while (length != -1) {
-                outputStream.write(buffer, 0, length);
-                double temp = Double.parseDouble(df.format(((double) total / contentLength) * 100));
-                long curentTime = System.currentTimeMillis();
-                if (temp > p && curentTime - preTime >= 1000) {// 时间差大于等于1s才输出
-                    String percent = df.format(temp) + "%";
-                    String loaded = df.format((double) total / (1024 * 1024));
-                    String remaind = df.format((double) (contentLength - total) / (1024 * 1024));
-                    String process = "进度：" + percent + "   总大小：" + size + "MB   已下载：" + loaded + "MB" + "   剩余：" + remaind + "MB";
-
-                    // 速度 = 下载量 / 时间差（耗时）
-                    String unit = "";
-                    long speed = ((total - last) / (curentTime - preTime)) * 1000;
-                    if (speed < 1024) {
-                        unit = "B/s";
-                    } else if (speed >= 1024 && speed < (1024 * 1024)) {
-                        speed = speed / 1024;
-                        unit = "KB/s";
-                    } else if (speed >= (1024 * 1024)) {
-                        speed = speed / (1024 * 1024);
-                        unit = "MB/s";
-                    }
-                    process += "  下载速度：" + speed + unit;
-                    System.out.println(process);
-
-                    preTime = curentTime;
-                    last = total;
-                    p = temp;
-                }
-                length = inputStream.read(buffer);
-                total += length;
-            }
-            outputStream.flush();
-
-            if (contentLength != file.length()) {
-                System.out.println("下载失败，文件无效");
-                return;
-            }
-            System.out.println("下载完成！下载后文件总大小：" + df.format((double) file.length() / (1024 * 1024)) + "MB");
-        } catch (FileNotFoundException fe) {
-            System.out.println("地址无效，文件不存在！");
-            fe.printStackTrace();
-            logger.error("[VideoUtil:download]:\n" + " VIDEO URL：" + url + " \n NEW FILENAME:" + filename + " DOWNLOAD FAILED!! ");
-        } catch (Exception e) {
-            logger.error("[VideoUtil:download]:\n" + " VIDEO URL：" + url + " \n NEW FILENAME:" + filename + " DOWNLOAD FAILED!! ");
-            e.printStackTrace();
-        } finally {
+        @Override
+        public void run() {
             try {
-                // 完毕，关闭所有链接
-                if (outputStream != null) {
-                    outputStream.close();
+                URL url = new URL(path);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setConnectTimeout(5 * 1000);
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty(
+                        "Accept",
+                        "image/gif, image/jpeg, image/pjpeg, image/pjpeg, "
+                                + "application/x-shockwave-flash, application/xaml+xml, "
+                                + "application/vnd.ms-xpsdocument, application/x-ms-xbap, "
+                                + "application/x-ms-application, application/vnd.ms-excel, "
+                                + "application/vnd.ms-powerpoint, application/msword, */*");
+                conn.setRequestProperty("Accept-Language", "zh-CN");
+                conn.setRequestProperty("Charset", "UTF-8");
+                InputStream inStream = conn.getInputStream();
+                inStream.skip(this.startPos);// 跳过startPos个字节，表明该线程只下载自己负责哪部分文件。
+                byte[] buffer = new byte[1024];
+                int hasRead = 0;
+
+                // 读取网络数据，并写入本地文件
+                while (length < currentPartSize && (hasRead = inStream.read(buffer)) != -1) {
+                    currentPart.write(buffer, 0, hasRead);
+                    length += hasRead;// 累计该线程下载的总大小
                 }
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException e) {
-                logger.error("下载异常", e);
+                currentPart.close();
+                inStream.close();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

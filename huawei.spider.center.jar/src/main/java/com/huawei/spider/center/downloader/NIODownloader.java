@@ -7,17 +7,19 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.text.DecimalFormat;
 
 /**
- * 功能：下载器
+ * 功能：多线程下载器
  * 作者：laihuawei(laihuawei@lianj.com)
  * 日期：2018年09月2018/9/7日 15:38
  * 版权所有：广东联结网络技术有限公司 版权所有(C)
  */
-public class Downloader {
+public class NIODownloader {
 
-    private Logger logger = LoggerFactory.getLogger(Downloader.class);
+    private Logger logger = LoggerFactory.getLogger(NIODownloader.class);
 
     /**
      * 下载文件到本地
@@ -55,7 +57,7 @@ public class Downloader {
                 System.out.println("资源请求失败, 错误码：" + connection.getResponseCode());
                 return;
             }
-            long contentLength = connection.getContentLengthLong();
+            int contentLength = connection.getContentLength();
             if (contentLength == 0 || contentLength == -1) {
                 System.out.println("文件无效或不存在");
                 return;
@@ -66,48 +68,11 @@ public class Downloader {
 //            System.out.println("目标文件总大小（bytes）： " + contentLength + "B");
             System.out.println("目标文件总大小（MB）： " + size + "MB");
 
-            outputStream = new FileOutputStream(file);
             inputStream = new BufferedInputStream(connection.getInputStream());// 输入流
-
-            int total = 0;// 已下载量百分比
-            double p = 0;// 上次下载量百分比
-            int last = 0;// 上次下载量
-            long preTime = System.currentTimeMillis();// 上次下载时间
-            byte[] buffer = new byte[1024];
-            int length = inputStream.read(buffer);
-            while (length != -1) {
-                outputStream.write(buffer, 0, length);
-                double temp = Double.parseDouble(df.format(((double) total / contentLength) * 100));
-                long curentTime = System.currentTimeMillis();
-                if (temp > p && curentTime - preTime >= 1000) {// 时间差大于等于1s才输出
-                    String percent = df.format(temp) + "%";
-                    String loaded = df.format((double) total / (1024 * 1024));
-                    String remaind = df.format((double) (contentLength - total) / (1024 * 1024));
-                    String process = "进度：" + percent + "   总大小：" + size + "MB   已下载：" + loaded + "MB" + "   剩余：" + remaind + "MB";
-
-                    // 速度 = 下载量 / 时间差（耗时）
-                    String unit = "";
-                    long speed = ((total - last) / (curentTime - preTime)) * 1000;
-                    if (speed < 1024) {
-                        unit = "B/s";
-                    } else if (speed >= 1024 && speed < (1024 * 1024)) {
-                        speed = speed / 1024;
-                        unit = "KB/s";
-                    } else if (speed >= (1024 * 1024)) {
-                        speed = speed / (1024 * 1024);
-                        unit = "MB/s";
-                    }
-                    process += "  下载速度：" + speed + unit;
-                    System.out.println(process);
-
-                    preTime = curentTime;
-                    last = total;
-                    p = temp;
-                }
-                length = inputStream.read(buffer);
-                total += length;
-            }
-            outputStream.flush();
+            outputStream = new FileOutputStream(file);
+            ReadableByteChannel readChannel = Channels.newChannel(u.openStream());
+            outputStream.getChannel().transferFrom(readChannel, 0, Long.MAX_VALUE);
+//            Files.copy(connection.getInputStream(), Paths.get(filename), StandardCopyOption.REPLACE_EXISTING);
 
             if (contentLength != file.length()) {
                 System.out.println("下载失败，文件无效");
