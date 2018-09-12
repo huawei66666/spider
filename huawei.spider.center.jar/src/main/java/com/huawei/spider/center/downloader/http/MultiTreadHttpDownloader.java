@@ -1,4 +1,4 @@
-package com.huawei.spider.center.downloader;
+package com.huawei.spider.center.downloader.http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +14,9 @@ import java.net.URL;
  * 日期：2018年09月2018/9/7日 15:38
  * 版权所有：广东联结网络技术有限公司 版权所有(C)
  */
-public class MultiTreadDownloader {
+public class MultiTreadHttpDownloader {
 
-    private Logger logger = LoggerFactory.getLogger(MultiTreadDownloader.class);
+    private Logger logger = LoggerFactory.getLogger(MultiTreadHttpDownloader.class);
 
     /**
      * 定义下载资源的路径
@@ -46,7 +46,7 @@ public class MultiTreadDownloader {
      * @param targetFile
      * @param threadNum
      */
-    public MultiTreadDownloader(String path, String targetFile, int threadNum) {
+    public MultiTreadHttpDownloader(String path, String targetFile, int threadNum) {
         this.path = path;
         this.threadNum = threadNum;
         threads = new DownThread[threadNum];// 初始化threads数组
@@ -60,23 +60,30 @@ public class MultiTreadDownloader {
      */
     public void download() throws Exception {
         URL url = new URL(path);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setConnectTimeout(5 * 1000);
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty(
-                "Accept",
-                "image/gif, image/jpeg, image/pjpeg, image/pjpeg, "
-                        + "application/x-shockwave-flash, application/xaml+xml, "
-                        + "application/vnd.ms-xpsdocument, application/x-ms-xbap, "
-                        + "application/x-ms-application, application/vnd.ms-excel, "
-                        + "application/vnd.ms-powerpoint, application/msword, */*");
-        conn.setRequestProperty("Accept-Language", "zh-CN");
-        conn.setRequestProperty("Charset", "UTF-8");
-        conn.setRequestProperty("Connection", "Keep-Alive");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//        conn.setRequestMethod("GET");
+//        conn.setRequestProperty(
+//                "Accept",
+//                "image/gif, image/jpeg, image/pjpeg, image/pjpeg, "
+//                        + "application/x-shockwave-flash, application/xaml+xml, "
+//                        + "application/vnd.ms-xpsdocument, application/x-ms-xbap, "
+//                        + "application/x-ms-application, application/vnd.ms-excel, "
+//                        + "application/vnd.ms-powerpoint, application/msword, */*");
+//        conn.setRequestProperty("Accept-Language", "zh-CN");
+//        conn.setRequestProperty("Charset", "UTF-8");
+//        conn.setRequestProperty("Connection", "Keep-Alive");
+
+        connection.setConnectTimeout(30000);
+        connection.setReadTimeout(30000);
+        connection.connect();
+        if (connection.getResponseCode() != 200) {// 200:请求资源成功
+            System.out.println("资源请求失败, 错误码：" + connection.getResponseCode());
+            return;
+        }
 
         // 得到文件大小
-        fileSize = conn.getContentLength();
-        conn.disconnect();
+        fileSize = connection.getContentLength();
+        connection.disconnect();
         int currentPartSize = fileSize / threadNum + 1;//这里不必一定要加1,不加1也可以
         RandomAccessFile file = new RandomAccessFile(targetFile, "rw");
         file.setLength(fileSize);// 设置本地文件的大小
@@ -139,19 +146,22 @@ public class MultiTreadDownloader {
         public void run() {
             try {
                 URL url = new URL(path);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setConnectTimeout(5 * 1000);
-                conn.setRequestMethod("GET");
-                conn.setRequestProperty(
-                        "Accept",
-                        "image/gif, image/jpeg, image/pjpeg, image/pjpeg, "
-                                + "application/x-shockwave-flash, application/xaml+xml, "
-                                + "application/vnd.ms-xpsdocument, application/x-ms-xbap, "
-                                + "application/x-ms-application, application/vnd.ms-excel, "
-                                + "application/vnd.ms-powerpoint, application/msword, */*");
-                conn.setRequestProperty("Accept-Language", "zh-CN");
-                conn.setRequestProperty("Charset", "UTF-8");
-                InputStream inStream = conn.getInputStream();
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//                conn.setConnectTimeout(5 * 1000);
+//                conn.setRequestMethod("GET");
+//                conn.setRequestProperty(
+//                        "Accept",
+//                        "image/gif, image/jpeg, image/pjpeg, image/pjpeg, "
+//                                + "application/x-shockwave-flash, application/xaml+xml, "
+//                                + "application/vnd.ms-xpsdocument, application/x-ms-xbap, "
+//                                + "application/x-ms-application, application/vnd.ms-excel, "
+//                                + "application/vnd.ms-powerpoint, application/msword, */*");
+//                conn.setRequestProperty("Accept-Language", "zh-CN");
+//                conn.setRequestProperty("Charset", "UTF-8");
+                connection.setConnectTimeout(30000);
+                connection.setReadTimeout(30000);
+                connection.connect();
+                InputStream inStream = connection.getInputStream();
                 inStream.skip(this.startPos);// 跳过startPos个字节，表明该线程只下载自己负责哪部分文件。
                 byte[] buffer = new byte[1024];
                 int hasRead = 0;

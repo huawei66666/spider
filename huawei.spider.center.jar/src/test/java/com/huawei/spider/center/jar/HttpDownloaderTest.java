@@ -1,7 +1,7 @@
 package com.huawei.spider.center.jar;
 
-import com.huawei.spider.center.downloader.Downloader;
-import com.huawei.spider.center.downloader.NIODownloader;
+import com.huawei.spider.center.downloader.http.HttpDownloader;
+import com.huawei.spider.center.downloader.http.NIOHttpDownloader;
 import org.junit.Test;
 
 /**
@@ -10,7 +10,7 @@ import org.junit.Test;
  * 日期：2018年09月2018/9/7日 15:36
  * 版权所有：广东联结网络技术有限公司 版权所有(C)
  */
-public class DownloaderTest {
+public class HttpDownloaderTest {
 
     @Test
     public void testDownloader() throws Exception {
@@ -23,8 +23,8 @@ public class DownloaderTest {
         String outputPath = "D:/videos";
 //        String outputPath = "/Users/laihuawei/downloads";
 //        String outputPath = "/mydoc/videos";
-        Downloader downloader = new Downloader();
-        downloader.download(url, outputPath, 30000);
+        HttpDownloader httpDownloader = new HttpDownloader();
+        httpDownloader.download(url, outputPath, 30000);
     }
 
     @Test
@@ -33,7 +33,7 @@ public class DownloaderTest {
         String outputPath = "D:/videos";
 //        String outputPath = "/Users/laihuawei/downloads";
 //        String outputPath = "/mydoc/videos";
-        NIODownloader downloader = new NIODownloader();
+        NIOHttpDownloader downloader = new NIOHttpDownloader();
         downloader.download(url, outputPath, 30000);
     }
 

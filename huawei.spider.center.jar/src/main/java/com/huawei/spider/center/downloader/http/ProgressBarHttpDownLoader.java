@@ -1,4 +1,4 @@
-package com.huawei.spider.center.downloader;
+package com.huawei.spider.center.downloader.http;
 
 import javax.swing.*;
 import java.io.FileOutputStream;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 /**
  * 带进度条的限速的java文件下载
  */
-public class ProgressBarDownLoader extends JFrame implements Runnable {
+public class ProgressBarHttpDownLoader extends JFrame implements Runnable {
     //限速标志(单位:Kb/s)
     private static final double limitSpeed = 10000;
     //下载文件地址
@@ -29,7 +29,7 @@ public class ProgressBarDownLoader extends JFrame implements Runnable {
     private MyPanel panel;
     private long totalTime = 0;
 
-    private ProgressBarDownLoader(int totalSize) {
+    private ProgressBarHttpDownLoader(int totalSize) {
         proList = new ArrayList<>();
         this.totalSize = totalSize;
         panel = new MyPanel();
@@ -152,7 +152,7 @@ public class ProgressBarDownLoader extends JFrame implements Runnable {
             FileOutputStream fs = new FileOutputStream(PATH);
             int connLength = conn.getContentLength();
 
-            ProgressBarDownLoader pbt = new ProgressBarDownLoader(connLength);//创建进度条
+            ProgressBarHttpDownLoader pbt = new ProgressBarHttpDownLoader(connLength);//创建进度条
             new Thread(pbt).start();//开启线程，刷新进度条
             long startTime = System.currentTimeMillis();
             pbt.prevTime = System.currentTimeMillis();
