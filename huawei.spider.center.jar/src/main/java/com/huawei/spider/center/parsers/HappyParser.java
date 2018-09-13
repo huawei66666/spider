@@ -1,5 +1,6 @@
 package com.huawei.spider.center.parsers;
 
+import com.huawei.spider.center.beans.UrlInfoBo;
 import com.huawei.spider.center.utils.FileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -10,44 +11,67 @@ import org.jsoup.select.Elements;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by huawei on 2018/9/8.
  */
 public class HappyParser {
 
+    private String localFilePath = "D:/happy.txt";
+
+    public HappyParser() {
+    }
+
+    public HappyParser(String localFilePath) {
+        this.localFilePath = localFilePath;
+    }
+
     /**
      * url解析
      *
      * @throws Exception
      */
-    public void parse() throws Exception {
+    public List<UrlInfoBo> parse() throws Exception {
+        List<UrlInfoBo> result = new ArrayList<>();
         try {
+            System.out.println("链接开始提取...");
+
             String domain = "http://dcdiban.com";
             Document doc = Jsoup.parse(new URL(domain).openStream(), "gb2312", domain);
             Elements elements = doc.select(".caoporn_Maincontentfive .index_videoshow a");
             String info = "";
             for (Element a : elements) {
-                String name = a.select("p").html();
+                String desc = a.select("p").html();
 
                 String src = a.select("img").attr("src");
                 String img = domain + src;
 
                 String html = a.attr("href");
                 String url = getDownloadUrl(domain + html);
-                if(StringUtils.isNoneBlank(url)) {
-                    info += name + "  img: " + img + "   downloadUrl: " + url + "\n";
+                if (StringUtils.isNoneBlank(url)) {
+                    info += desc + "  img: " + img + "   downloadUrl: " + url + "\n";
                     System.out.println(info);
+
+                    UrlInfoBo urlInfoBo = new UrlInfoBo();
+                    urlInfoBo.setUrl(url);
+                    String name = url.substring(url.lastIndexOf("/"));
+                    urlInfoBo.setName(name);
+                    urlInfoBo.setDesc(desc);
+                    result.add(urlInfoBo);
                 }
             }
+            if (StringUtils.isNotBlank(this.localFilePath)) {
+                FileUtil.writeToFile(this.localFilePath, info);// 写入文件
+            }
 
-            System.out.println("提取完成！");
-//            String localPath = "/mydoc/happy.txt";
-            String localPath = "D:/happy.txt";
-            FileUtil.writeToFile(localPath, info);// 写入文件
+            System.out.println("链接提取完成！");
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     /**
@@ -97,5 +121,14 @@ public class HappyParser {
         }
 
         return "";
+    }
+
+
+    public String getLocalFilePath() {
+        return localFilePath;
+    }
+
+    public void setLocalFilePath(String localFilePath) {
+        this.localFilePath = localFilePath;
     }
 }

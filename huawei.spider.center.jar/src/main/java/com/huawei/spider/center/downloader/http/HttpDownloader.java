@@ -19,6 +19,8 @@ public class HttpDownloader {
 
     private Logger logger = LoggerFactory.getLogger(HttpDownloader.class);
 
+    private static String defaultOutputPath = "D:/videos";// 默认存放路径
+
     /**
      * 下载文件到本地
      *
@@ -34,9 +36,13 @@ public class HttpDownloader {
             System.out.println("无效的地址");
             return;
         }
-        String filename = outputPath + url.substring(url.lastIndexOf("/"));
+        if (StringUtils.isBlank(outputPath)) {// 若输出地址为空，拿默认存放路径
+            outputPath = this.defaultOutputPath;
+        }
+        String filename = url.substring(url.lastIndexOf("/") + 1);
         try {
-            File file = new File(filename);
+            outputPath = outputPath + "/" + filename;
+            File file = new File(outputPath);
             if (file.exists()) {
                 file.delete();
             }
@@ -83,7 +89,7 @@ public class HttpDownloader {
                     String percent = df.format(temp) + "%";
                     String loaded = df.format((double) total / (1024 * 1024));
                     String remaind = df.format((double) (contentLength - total) / (1024 * 1024));
-                    String process = "进度：" + percent + "   总大小：" + size + "MB   已下载：" + loaded + "MB" + "   剩余：" + remaind + "MB";
+                    String process = "正在下载：" + filename + "   进度：" + percent + "   总大小：" + size + "MB   已下载：" + loaded + "MB" + "   剩余：" + remaind + "MB";
 
                     // 速度 = 下载量 / 时间差（耗时）
                     String unit = "";
@@ -110,12 +116,12 @@ public class HttpDownloader {
             outputStream.flush();
 
             if (contentLength != file.length()) {
-                System.out.println("下载失败，文件无效");
+                System.out.println(filename + "下载失败，文件无效");
                 return;
             }
-            System.out.println("下载完成！下载后文件总大小：" + df.format((double) file.length() / (1024 * 1024)) + "MB");
+            System.out.println(filename + "下载完成！下载后文件总大小：" + df.format((double) file.length() / (1024 * 1024)) + "MB");
         } catch (FileNotFoundException fe) {
-            System.out.println("地址无效，文件不存在！");
+            System.out.println(filename + "地址无效，文件不存在！");
             fe.printStackTrace();
             logger.error("[VideoUtil:download]:\n" + " VIDEO URL：" + url + " \n NEW FILENAME:" + filename + " DOWNLOAD FAILED!! ");
         } catch (Exception e) {
