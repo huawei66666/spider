@@ -1,9 +1,9 @@
 package com.huawei.spider.center.thread;
 
 /**
- * 功能：线程任务
+ * 功能：测试多线程类
  * 作者：laihuawei(laihuawei@lianj.com)
- * 日期：2018年09月2018/9/13日 17:34
+ * 日期：2018年09月2018/9/14日 11:44
  * 版权所有：广东联结网络技术有限公司 版权所有(C)
  */
 public class MyTask implements Runnable {
@@ -24,4 +24,5 @@ public class MyTask implements Runnable {
         }
         System.out.println("task " + taskNum + "执行完毕");
     }
+
 }

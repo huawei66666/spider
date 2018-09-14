@@ -1,4 +1,4 @@
-package com.huawei.spider.center.jar;
+package com.huawei.spider.center.test;
 
 import com.huawei.spider.center.thread.MyTask;
 import com.huawei.spider.center.utils.ThreadHelper;
@@ -39,12 +39,9 @@ public class TheadTest {
         Thread.sleep(10000);
     }
 
-
     @Test
     public void testExecutor() throws Exception {
-        ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 10, 200, TimeUnit.MILLISECONDS,
-                new ArrayBlockingQueue<Runnable>(5));
-
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 10, 200, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(5));
         for (int i = 0; i < 15; i++) {
             MyTask myTask = new MyTask(i);
             executor.execute(myTask);
@@ -53,7 +50,6 @@ public class TheadTest {
         }
         executor.shutdown();
     }
-
 
 }
 

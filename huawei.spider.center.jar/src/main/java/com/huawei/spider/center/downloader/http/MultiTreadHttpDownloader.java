@@ -1,5 +1,6 @@
 package com.huawei.spider.center.downloader.http;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +19,10 @@ public class MultiTreadHttpDownloader {
 
     private Logger logger = LoggerFactory.getLogger(MultiTreadHttpDownloader.class);
 
+    /**
+     * 定义文件名称
+     */
+    private String filename;
     /**
      * 定义下载资源的路径
      */
@@ -38,6 +43,10 @@ public class MultiTreadHttpDownloader {
      * 定义下载的文件的总大小
      */
     private int fileSize;
+    /**
+     * 默认存放路径
+     */
+    private static final String defaultTargetPath = "D:/videos";
 
     /**
      * 构造器
@@ -49,8 +58,10 @@ public class MultiTreadHttpDownloader {
     public MultiTreadHttpDownloader(String path, String targetFile, int threadNum) {
         this.path = path;
         this.threadNum = threadNum;
-        threads = new DownThread[threadNum];// 初始化threads数组
-        this.targetFile = targetFile;
+        this.threads = new DownThread[threadNum];// 初始化threads数组
+        this.filename = path.substring(path.lastIndexOf("/") + 1);
+        this.targetFile = StringUtils.isBlank(targetFile) ? defaultTargetPath + "/" + filename : targetFile + "/" + filename;
+
     }
 
     /**
@@ -61,23 +72,11 @@ public class MultiTreadHttpDownloader {
     public void download() throws Exception {
         URL url = new URL(path);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//        conn.setRequestMethod("GET");
-//        conn.setRequestProperty(
-//                "Accept",
-//                "image/gif, image/jpeg, image/pjpeg, image/pjpeg, "
-//                        + "application/x-shockwave-flash, application/xaml+xml, "
-//                        + "application/vnd.ms-xpsdocument, application/x-ms-xbap, "
-//                        + "application/x-ms-application, application/vnd.ms-excel, "
-//                        + "application/vnd.ms-powerpoint, application/msword, */*");
-//        conn.setRequestProperty("Accept-Language", "zh-CN");
-//        conn.setRequestProperty("Charset", "UTF-8");
-//        conn.setRequestProperty("Connection", "Keep-Alive");
-
         connection.setConnectTimeout(30000);
         connection.setReadTimeout(30000);
         connection.connect();
         if (connection.getResponseCode() != 200) {// 200:请求资源成功
-            System.out.println("资源请求失败, 错误码：" + connection.getResponseCode());
+            System.out.println("资源" + filename + "请求失败, 错误码：" + connection.getResponseCode());
             return;
         }
 
@@ -85,6 +84,7 @@ public class MultiTreadHttpDownloader {
         fileSize = connection.getContentLength();
         connection.disconnect();
         int currentPartSize = fileSize / threadNum + 1;//这里不必一定要加1,不加1也可以
+
         RandomAccessFile file = new RandomAccessFile(targetFile, "rw");
         file.setLength(fileSize);// 设置本地文件的大小
         file.close();
@@ -105,7 +105,16 @@ public class MultiTreadHttpDownloader {
         for (int i = 0; i < threadNum; i++) {
             sumSize += threads[i].length;
         }
-        return sumSize * 1.0 / fileSize; // 返回已经完成的百分比
+        return (double) sumSize / fileSize; // 返回已经完成的百分比
+    }
+
+    /**
+     * 获取当前下载文件名
+     *
+     * @return
+     */
+    public String getFilename() {
+        return filename;
     }
 
     /**
@@ -144,38 +153,38 @@ public class MultiTreadHttpDownloader {
 
         @Override
         public void run() {
+            InputStream inputStream = null;
             try {
                 URL url = new URL(path);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//                conn.setConnectTimeout(5 * 1000);
-//                conn.setRequestMethod("GET");
-//                conn.setRequestProperty(
-//                        "Accept",
-//                        "image/gif, image/jpeg, image/pjpeg, image/pjpeg, "
-//                                + "application/x-shockwave-flash, application/xaml+xml, "
-//                                + "application/vnd.ms-xpsdocument, application/x-ms-xbap, "
-//                                + "application/x-ms-application, application/vnd.ms-excel, "
-//                                + "application/vnd.ms-powerpoint, application/msword, */*");
-//                conn.setRequestProperty("Accept-Language", "zh-CN");
-//                conn.setRequestProperty("Charset", "UTF-8");
                 connection.setConnectTimeout(30000);
                 connection.setReadTimeout(30000);
                 connection.connect();
-                InputStream inStream = connection.getInputStream();
-                inStream.skip(this.startPos);// 跳过startPos个字节，表明该线程只下载自己负责哪部分文件。
+                inputStream = connection.getInputStream();
+                inputStream.skip(this.startPos);// 跳过startPos个字节，表明该线程只下载自己负责哪部分文件。
                 byte[] buffer = new byte[1024];
                 int hasRead = 0;
 
                 // 读取网络数据，并写入本地文件
-                while (length < currentPartSize && (hasRead = inStream.read(buffer)) != -1) {
+                while (length < currentPartSize && (hasRead = inputStream.read(buffer)) != -1) {
                     currentPart.write(buffer, 0, hasRead);
                     length += hasRead;// 累计该线程下载的总大小
                 }
-                currentPart.close();
-                inStream.close();
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    if (currentPart != null) {
+                        currentPart.close();
+                    }
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+
         }
     }
 

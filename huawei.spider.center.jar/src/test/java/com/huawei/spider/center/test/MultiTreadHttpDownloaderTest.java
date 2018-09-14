@@ -1,4 +1,4 @@
-package com.huawei.spider.center.jar;
+package com.huawei.spider.center.test;
 
 import com.huawei.spider.center.downloader.http.MultiTreadHttpDownloader;
 import org.junit.Test;
@@ -15,8 +15,8 @@ public class MultiTreadHttpDownloaderTest {
     public void testDownload() throws Exception {
 //        String targitFile = "tomcat-7.0.54.zip";
 //        String url = "http://mirrors.cnnic.cn/apache/tomcat/tomcat-7/v7.0.54/bin/apache-tomcat-7.0.54.zip";
-        String targitFile = "D:/videos/aa.mp4";
-        String url = "ftp://ygdy8:ygdy8@yg45.dydytt.net:8282/阳光电影www.ygdy8.com.摩天营救.HD.720p.中英双字幕.rmvb";
+        String targitFile = "D:/videos";
+        String url = "https://201806.53didi.com/20180818/1/1/xml/91_647fb197eece4d0fe698561d730a27ed.mp4";
         int threadNum = 3;
         final MultiTreadHttpDownloader downloader = new MultiTreadHttpDownloader(url, targitFile, threadNum);
         downloader.download();
@@ -25,13 +25,12 @@ public class MultiTreadHttpDownloaderTest {
             @Override
             public void run() {
                 while (downloader.getCompleteRate() < 1) {
-                    System.out.println("已完成:" + downloader.getCompleteRate());
                     try {
-                        Thread.sleep(100);
+                        System.out.println(downloader.getFilename() + "   已完成:" + downloader.getCompleteRate());
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-
                 }
             }
         }).start();

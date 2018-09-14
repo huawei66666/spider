@@ -1,4 +1,4 @@
-package com.huawei.spider.center.jar;
+package com.huawei.spider.center.test;
 
 import com.huawei.spider.center.downloader.http.HttpDownloader;
 import com.huawei.spider.center.downloader.http.NIOHttpDownloader;

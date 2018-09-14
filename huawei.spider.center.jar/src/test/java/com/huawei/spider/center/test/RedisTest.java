@@ -1,4 +1,4 @@
-package com.huawei.spider.center.jar;
+package com.huawei.spider.center.test;
 
 import org.junit.Test;
 import redis.clients.jedis.Jedis;

@@ -40,17 +40,9 @@ public class HttpDownloader {
             outputPath = this.defaultOutputPath;
         }
         String filename = url.substring(url.lastIndexOf("/") + 1);
+        outputPath = outputPath + "/" + filename;
+        File file = new File(outputPath);
         try {
-            outputPath = outputPath + "/" + filename;
-            File file = new File(outputPath);
-            if (file.exists()) {
-                file.delete();
-            }
-            if (!file.isDirectory()) {
-                file.createNewFile();//创建文件
-            }
-            File parent = new File(file.getParent());// 输出的文件流
-            parent.mkdirs();
 
             URL u = new URL(url);// 构造URL
             HttpURLConnection connection = (HttpURLConnection) u.openConnection();// 打开连接
@@ -71,6 +63,15 @@ public class HttpDownloader {
             String size = df.format((double) contentLength / (1024 * 1024));
 //            System.out.println("目标文件总大小（bytes）： " + contentLength + "B");
             System.out.println("目标文件总大小（MB）： " + size + "MB");
+
+            if (file.exists()) {
+                file.delete();
+            }
+            if (!file.isDirectory()) {
+                file.createNewFile();//创建文件
+            }
+            File parent = new File(file.getParent());// 输出的文件流
+            parent.mkdirs();
 
             outputStream = new FileOutputStream(file);
             inputStream = new BufferedInputStream(connection.getInputStream());// 输入流
@@ -117,16 +118,24 @@ public class HttpDownloader {
 
             if (contentLength != file.length()) {
                 System.out.println(filename + "下载失败，文件无效");
+                file.delete();
                 return;
             }
             System.out.println(filename + "下载完成！下载后文件总大小：" + df.format((double) file.length() / (1024 * 1024)) + "MB");
         } catch (FileNotFoundException fe) {
             System.out.println(filename + "地址无效，文件不存在！");
-            fe.printStackTrace();
-            logger.error("[VideoUtil:download]:\n" + " VIDEO URL：" + url + " \n NEW FILENAME:" + filename + " DOWNLOAD FAILED!! ");
+            logger.error("VIDEO URL：" + url + " FILENAME:" + filename + " DOWNLOAD FAILED!! ");
+            if (file.exists()) {
+                file.delete();
+            }
+//            fe.printStackTrace();
         } catch (Exception e) {
-            logger.error("[VideoUtil:download]:\n" + " VIDEO URL：" + url + " \n NEW FILENAME:" + filename + " DOWNLOAD FAILED!! ");
-            e.printStackTrace();
+            System.out.println("无法下载" + filename);
+            logger.error("VIDEO URL：" + url + " FILENAME:" + filename + " DOWNLOAD FAILED!! ");
+            if (file.exists()) {
+                file.delete();
+            }
+//            e.printStackTrace();
         } finally {
             try {
                 // 完毕，关闭所有链接

@@ -56,7 +56,7 @@ public class HappyParser {
 
                     UrlInfoBo urlInfoBo = new UrlInfoBo();
                     urlInfoBo.setUrl(url);
-                    String name = url.substring(url.lastIndexOf("/"));
+                    String name = url.substring(url.lastIndexOf("/") + 1);
                     urlInfoBo.setName(name);
                     urlInfoBo.setDesc(desc);
                     result.add(urlInfoBo);
