@@ -117,13 +117,13 @@ public class HttpDownloader {
             outputStream.flush();
 
             if (contentLength != file.length()) {
-                System.out.println(filename + "下载失败，文件无效");
+                System.out.println(filename + " 下载失败，文件无效");
                 file.delete();
                 return;
             }
-            System.out.println(filename + "下载完成！下载后文件总大小：" + df.format((double) file.length() / (1024 * 1024)) + "MB");
+            System.out.println(filename + " 下载完成！下载后文件总大小：" + df.format((double) file.length() / (1024 * 1024)) + "MB");
         } catch (FileNotFoundException fe) {
-            System.out.println(filename + "地址无效，文件不存在！");
+            System.out.println(filename + " 地址无效，文件不存在！");
             logger.error("VIDEO URL：" + url + " FILENAME:" + filename + " DOWNLOAD FAILED!! ");
             if (file.exists()) {
                 file.delete();
@@ -146,8 +146,10 @@ public class HttpDownloader {
                     inputStream.close();
                 }
             } catch (IOException e) {
-                logger.error("下载异常", e);
+                logger.error("流关闭异常！", e);
                 e.printStackTrace();
+//                System.out.println("java虚拟机非正常退出！");
+//                System.exit(1);
             }
         }
     }

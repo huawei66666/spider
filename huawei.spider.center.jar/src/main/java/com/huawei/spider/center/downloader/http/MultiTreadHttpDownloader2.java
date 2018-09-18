@@ -1,6 +1,5 @@
 package com.huawei.spider.center.downloader.http;
 
-import com.huawei.spider.center.thread.RateTask;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,11 +8,6 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DecimalFormat;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 功能：http、https 多线程下载器
@@ -21,9 +15,9 @@ import java.util.concurrent.TimeUnit;
  * 日期：2018年09月2018/9/7日 15:38
  * 版权所有：广东联结网络技术有限公司 版权所有(C)
  */
-public class MultiTreadHttpDownloader {
+public class MultiTreadHttpDownloader2 {
 
-    private Logger logger = LoggerFactory.getLogger(MultiTreadHttpDownloader.class);
+    private Logger logger = LoggerFactory.getLogger(MultiTreadHttpDownloader2.class);
 
     /**
      * 定义文件名称
@@ -50,10 +44,6 @@ public class MultiTreadHttpDownloader {
      */
     private int fileSize;
     /**
-     * 当前文件已下载大小
-     */
-    private int downloadSize;
-    /**
      * 默认存放路径
      */
     private static final String defaultTargetPath = "D:/videos";
@@ -65,7 +55,7 @@ public class MultiTreadHttpDownloader {
      * @param targetFile
      * @param threadNum
      */
-    public MultiTreadHttpDownloader(String path, String targetFile, int threadNum) {
+    public MultiTreadHttpDownloader2(String path, String targetFile, int threadNum) {
         this.path = path;
         this.threadNum = threadNum;
         this.threads = new DownThread[threadNum];// 初始化threads数组
@@ -108,12 +98,14 @@ public class MultiTreadHttpDownloader {
     }
 
     /**
-     * 以固定周期1s频率执行任务
+     * 获取下载的完成百分比
      */
-    public void executeFixedRate() {
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        RateTask task = new RateTask(filename, fileSize, downloadSize, null);
-        Future future = executor.scheduleAtFixedRate(task, 0, 1, TimeUnit.SECONDS);
+    public double getCompleteRate() {
+        int sumSize = 0;// 统计多条线程已经下载的总大小
+        for (int i = 0; i < threadNum; i++) {
+            sumSize += threads[i].length;
+        }
+        return (double) sumSize / fileSize; // 返回已经完成的百分比
     }
 
     /**
@@ -177,7 +169,6 @@ public class MultiTreadHttpDownloader {
                 while (length < currentPartSize && (hasRead = inputStream.read(buffer)) != -1) {
                     currentPart.write(buffer, 0, hasRead);
                     length += hasRead;// 累计该线程下载的总大小
-                    downloadSize += length;
                 }
             } catch (Exception e) {
                 System.out.println(getFilename() + " 下载出错：" + e + " 请重新下载：" + path);

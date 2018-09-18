@@ -8,9 +8,10 @@ import com.huawei.spider.center.thread.DownloadTask;
 import com.huawei.spider.center.thread.MultiThreadDownloadTask;
 import com.huawei.spider.center.utils.ThreadHelper;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.*;
 
 /**
  * 功能：爬虫
@@ -22,7 +23,33 @@ public class Spider {
 
     public static void main(String[] args) {
 //        testSpider();
-        testMultiTreadDownloader();
+//        testMultiTreadDownloader();
+        executeFixedRate();
+    }
+
+
+    /**
+     * 输出当前文件已下载百分比
+     */
+    public static void getCompleteRate() {
+        System.out.println(String.format("已下载"));
+    }
+
+    /**
+     * 以固定周期1s频率执行任务
+     */
+    public static void executeFixedRate() {
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        Future future = executor.scheduleAtFixedRate(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        getCompleteRate();
+                    }
+                },
+                0,
+                1,
+                TimeUnit.SECONDS);
     }
 
     public static void testSpider() {
@@ -70,8 +97,10 @@ public class Spider {
     public static void testMultiTreadDownloader() {
         try {
             // 本地链接存放地址
-            // String localPath = "/mydoc/happy.txt";
-            String localFilePath = "D:/happy.txt";
+            String localFilePath = "/mydoc/happy.txt";
+//            String localFilePath = "D:/happy.txt";
+            String outputPath = "/mydoc/videos";
+
             HappyParser parser = new HappyParser(localFilePath);
 //            List<UrlInfoBo> urls = parser.parse();
 
@@ -100,7 +129,7 @@ public class Spider {
                 ExecutorService pool = ThreadHelper.THREAD_POOL;
                 for (int i = 0; i < urls.size(); i++) {
                     UrlInfoBo bo = urls.get(i);
-                    pool.submit(new MultiThreadDownloadTask(i + 1, bo.getName(), bo.getUrl(), null));
+                    pool.submit(new MultiThreadDownloadTask(i + 1, bo.getName(), bo.getUrl(), outputPath));
                 }
                 pool.shutdown();// 线程执行完后停止
             }
@@ -110,7 +139,7 @@ public class Spider {
 
     }
 
-    public void testMultiTreadDownloader2() {
+    /*public void testMultiTreadDownloader2() {
         try {
             // 本地链接存放地址
             // String localPath = "/mydoc/happy.txt";
@@ -165,5 +194,5 @@ public class Spider {
             e.printStackTrace();
         }
 
-    }
+    }*/
 }

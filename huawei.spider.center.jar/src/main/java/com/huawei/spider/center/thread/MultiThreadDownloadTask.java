@@ -1,6 +1,7 @@
 package com.huawei.spider.center.thread;
 
 import com.huawei.spider.center.downloader.http.MultiTreadHttpDownloader;
+import com.huawei.spider.center.downloader.http.MultiTreadHttpDownloader2;
 
 /**
  * 功能：下载线程任务
@@ -30,7 +31,7 @@ public class MultiThreadDownloadTask implements Runnable {
         try {
             System.out.println("线程" + taskNum + "正在下载：" + name);
 
-            MultiTreadHttpDownloader downloader = new MultiTreadHttpDownloader(url, outputPath, 3);
+            MultiTreadHttpDownloader2 downloader = new MultiTreadHttpDownloader2(url, outputPath, 3);
             downloader.download();
 
             new Thread(new Runnable() {

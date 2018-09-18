@@ -1,6 +1,7 @@
 package com.huawei.spider.center.test;
 
 import com.huawei.spider.center.downloader.http.MultiTreadHttpDownloader;
+import com.huawei.spider.center.downloader.http.MultiTreadHttpDownloader2;
 import org.junit.Test;
 
 /**
@@ -18,7 +19,7 @@ public class MultiTreadHttpDownloaderTest {
         String targitFile = "D:/videos";
         String url = "https://201806.53didi.com/20180818/1/1/xml/91_647fb197eece4d0fe698561d730a27ed.mp4";
         int threadNum = 3;
-        final MultiTreadHttpDownloader downloader = new MultiTreadHttpDownloader(url, targitFile, threadNum);
+        final MultiTreadHttpDownloader2 downloader = new MultiTreadHttpDownloader2(url, targitFile, threadNum);
         downloader.download();
 
         new Thread(new Runnable() {
