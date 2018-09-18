@@ -130,7 +130,7 @@ public class HttpDownloader {
             }
 //            fe.printStackTrace();
         } catch (Exception e) {
-            System.out.println("无法下载" + filename);
+            System.out.println("无法下载 " + filename + "   原因：" + e.getMessage());
             logger.error("VIDEO URL：" + url + " FILENAME:" + filename + " DOWNLOAD FAILED!! ");
             if (file.exists()) {
                 file.delete();
