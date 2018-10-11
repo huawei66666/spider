@@ -37,4 +37,12 @@ public class HttpDownloaderTest {
         downloader.download(url, outputPath, 30000);
     }
 
+    @Test
+    public void testDownloaderJs() throws Exception {
+        String url = "http://cmsstatic.dataoke.com//js/scrollTop2.js?v=201810101200";
+        String outputPath = "/media/wei/d/spider/lamadaogou/js";
+        HttpDownloader httpDownloader = new HttpDownloader();
+        httpDownloader.download(url, outputPath, 30000);
+    }
+
 }

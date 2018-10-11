@@ -31,7 +31,7 @@ public class FetchImgsUtil {
             dir.mkdirs();
         }
         // 截取图片文件名
-        String fileName = imgUrl.substring(imgUrl.lastIndexOf('/') + 1, imgUrl.length());
+        String fileName = imgUrl.substring(imgUrl.lastIndexOf('/') + 1);
 
         try {
             // 文件名里面可能有中文或者空格，所以这里要进行处理。但空格又会被URLEncoder转义为加号

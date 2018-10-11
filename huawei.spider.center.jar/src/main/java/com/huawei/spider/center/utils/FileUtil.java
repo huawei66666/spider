@@ -58,7 +58,10 @@ public class FileUtil {
                 return;
             }
             File file = new File(localPath);
-            if (!file.exists()) {
+            File parent = new File(file.getParent());// 输出的文件
+            parent.mkdirs();
+
+            if (!file.exists() && !file.isDirectory()) {
                 file.createNewFile();
             }
 

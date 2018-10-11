@@ -184,6 +184,13 @@
             <version>2.3.0</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/net.sourceforge.cssparser/cssparser -->
+        <dependency>
+            <groupId>net.sourceforge.cssparser</groupId>
+            <artifactId>cssparser</artifactId>
+            <version>0.9.26</version>
+        </dependency>
+
     </dependencies>
 
     <build>
