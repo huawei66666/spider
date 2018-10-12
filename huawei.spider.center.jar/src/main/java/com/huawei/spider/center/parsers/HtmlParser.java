@@ -1,5 +1,6 @@
 package com.huawei.spider.center.parsers;
 
+import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.huawei.spider.center.downloader.http.HttpDownloader;
 import com.huawei.spider.center.utils.CssParserUtil;
 import com.huawei.spider.center.utils.FileUtil;
@@ -13,8 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
  * 网页爬虫解析器
@@ -23,27 +23,30 @@ public class HtmlParser {
 
     private static final Logger logger = LoggerFactory.getLogger(HtmlParser.class);
 
-    private static String localPath = "/media/wei/d/spider/lamadaogou";
+    private static String localPath = "/media/wei/d/spider/lamadaogou/wap";
 
     public static void main(String[] args) {
         parseHtml();
     }
 
+    /**
+     * 解析网页，包括HTML、css、image等
+     */
     private static void parseHtml() {
         try {
-            String domain = "http://www.lamadaogou.com";// 电影港
+            String domain = "http://www.lamadaogou.com/index.php?r=class/sub&cid=8612";
             Document doc = Jsoup.connect(domain).get();
             if (doc != null) {
-//                System.out.println(doc.toString());
+                System.out.println(doc.toString());
 //
 //                // html文件
-//                FileUtil.writeToFile(localPath + "/index.html", doc.toString());
-//
+                FileUtil.writeToFile(localPath + "/user_cat_sub.html", doc.toString());
+
 //                // css文件
                 getCssFile(doc);
 
                 // script文件
-//                getJsFile(doc);
+                getJsFile(doc);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -81,18 +84,17 @@ public class HtmlParser {
         if (links != null) {
             for (Element link : links) {
                 String linkHref = link.attr("href");
-                System.out.println(linkHref);
 
                 // 截取名称，写入文件
-                /*String cssName;
+                String cssName;
                 if (linkHref.indexOf(".css") != -1) {
                     cssName = linkHref.substring(linkHref.lastIndexOf("/") + 1, linkHref.lastIndexOf(".css") + 4);
                 } else {
                     cssName = linkHref + ".css";
                 }
                 System.out.println("正在提取：" + linkHref);
-                HttpDownloader httpDownloader = new HttpDownloader();
-                httpDownloader.download(linkHref, cssName, localPath + "/css/", 30000);*/
+                HttpDownloader cssDownloader = new HttpDownloader();
+                cssDownloader.download(linkHref, cssName, localPath + "/css/", 30000);
 
                 // 看是否有引用图片，若有，进行提取
                 URL u = new URL(linkHref);// 构造URL
@@ -101,9 +103,29 @@ public class HtmlParser {
                 connection.setReadTimeout(30000);
                 connection.connect();
                 if (connection.getResponseCode() == 200) {// 200:请求资源成功
-                    CssParserUtil.showCssText(connection.getInputStream());
-                }
+                    List<String> urls = CssParserUtil.getCssImage(connection.getInputStream());
+                    if (CollectionUtils.isNotEmpty(urls)) {
+                        for (String url : urls) {
+                            String newUrl = "";
 
+                            if (url.startsWith("/")) {
+                                String cssDomain = linkHref.substring(0, linkHref.lastIndexOf("/"));
+                                cssDomain = cssDomain.substring(0, cssDomain.lastIndexOf("/") - 1);
+                                newUrl = cssDomain + url;
+                            }
+                            if (url.startsWith("../")) {
+                                String cssDomain = linkHref.substring(0, linkHref.lastIndexOf("/"));
+                                cssDomain = cssDomain.substring(0, cssDomain.lastIndexOf("/"));
+                                url = url.replaceAll("../", "/");
+                                newUrl = cssDomain + url;
+                            }
+
+                            System.out.println("正在提取：" + newUrl);
+                            HttpDownloader imageDownloader = new HttpDownloader();
+                            imageDownloader.download(newUrl, localPath + "/css/image/", 30000);
+                        }
+                    }
+                }
             }
         }
     }
