@@ -1,6 +1,7 @@
 package com.huawei.spider.center.test;
 
 import com.huawei.spider.center.parsers.HappyParser;
+import com.huawei.spider.center.parsers.HappyParserV2;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,7 +23,7 @@ public class HappyParserTest {
 
     @Test
     public void test() throws Exception {
-        HappyParser parser = new HappyParser();
+        HappyParserV2 parser = new HappyParserV2();
         parser.parse();
     }
 

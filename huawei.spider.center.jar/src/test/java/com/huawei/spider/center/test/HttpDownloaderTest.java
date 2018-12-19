@@ -19,7 +19,7 @@ public class HttpDownloaderTest {
 //        String url = "https://dns.whbosscar.com/20180818/1/1/xml/91_dfd3194527d54cb29607e713168e01e4.mp4";
 //        String url = "https://dns.whbosscar.com/20180818/1/1/xml/91_be38cb925a9a441a92e34308e23204ec.mp4";
 
-        String url = "http://tracker.trackerfix.com:80/announce/Silencer.2018.720p.BluRay.H264.AAC-RARBG.mp4";
+        String url = "https://letv.cdn.changba.com/userdata/video/674300DDAFEE78569C33DC5901307461.mp4";
 //        String outputPath = "D:/videos";
 //        String outputPath = "/Users/laihuawei/downloads";
         String outputPath = "/mydoc/videos";

@@ -2,13 +2,12 @@ package com.huawei.spider.center.spider;
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.huawei.spider.center.beans.UrlInfoBo;
-import com.huawei.spider.center.downloader.http.MultiTreadHttpDownloader;
 import com.huawei.spider.center.parsers.HappyParser;
+import com.huawei.spider.center.parsers.HappyParserV2;
 import com.huawei.spider.center.thread.DownloadTask;
 import com.huawei.spider.center.thread.MultiThreadDownloadTask;
 import com.huawei.spider.center.utils.ThreadHelper;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -24,9 +23,33 @@ public class Spider {
     public static void main(String[] args) {
 //        testSpider();
 //        testMultiTreadDownloader();
-        executeFixedRate();
+//        executeFixedRate();
+        testSpider2();
     }
 
+
+    public static void testSpider2() {
+        try {
+            // 本地链接存放地址
+            String localFilePath = "/mydoc/happy.txt";
+//            String localFilePath = "D:/happy.txt";
+
+            String outputPath = "/mydoc/videos/a/b/new";
+
+            HappyParserV2 parser = new HappyParserV2(localFilePath);
+            List<UrlInfoBo> urls = parser.parse();
+            if (CollectionUtils.isNotEmpty(urls)) {
+                ExecutorService pool = ThreadHelper.THREAD_POOL;
+                for (int i = 0; i < urls.size(); i++) {
+                    UrlInfoBo bo = urls.get(i);
+                    pool.submit(new DownloadTask(i + 1, bo.getName(), bo.getUrl(), outputPath));
+                }
+                pool.shutdown();// 线程执行完后停止
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * 输出当前文件已下载百分比
