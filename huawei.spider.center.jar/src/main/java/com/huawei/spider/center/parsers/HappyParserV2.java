@@ -60,7 +60,7 @@ public class HappyParserV2 {
             if (StringUtils.isNotBlank(this.localFilePath)) {
                 FileUtil.writeToFile(this.localFilePath, info);// 写入文件
             }
-            System.out.println("链接提取完成！");
+            System.out.println("链接提取完成！一共提取" + result.size() + "个文件！");
             return result;
         } catch (Exception e) {
             e.printStackTrace();

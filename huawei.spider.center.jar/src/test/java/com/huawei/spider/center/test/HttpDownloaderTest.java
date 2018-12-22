@@ -24,7 +24,7 @@ public class HttpDownloaderTest {
 //        String outputPath = "/Users/laihuawei/downloads";
         String outputPath = "/mydoc/videos";
         HttpDownloader httpDownloader = new HttpDownloader();
-        httpDownloader.download(url, outputPath, 30000);
+        httpDownloader.download(url, outputPath, 1, 30000);
     }
 
     @Test
@@ -42,7 +42,7 @@ public class HttpDownloaderTest {
         String url = "http://cmsstatic.dataoke.com//js/scrollTop2.js?v=201810101200";
         String outputPath = "/media/wei/d/spider/lamadaogou/js";
         HttpDownloader httpDownloader = new HttpDownloader();
-        httpDownloader.download(url, outputPath, 30000);
+        httpDownloader.download(url, outputPath, 1, 30000);
     }
 
 }

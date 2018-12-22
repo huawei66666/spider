@@ -122,7 +122,7 @@ public class HtmlParser {
 
                             System.out.println("正在提取：" + newUrl);
                             HttpDownloader imageDownloader = new HttpDownloader();
-                            imageDownloader.download(newUrl, localPath + "/css/image/", 30000);
+                            imageDownloader.download(newUrl, localPath + "/css/image/", 1, 30000);
                         }
                     }
                 }

@@ -29,7 +29,7 @@ public class HttpDownloader {
      * @param timeout    超时时间毫秒
      * @throws Exception 各种异常
      */
-    public void download(String url, String outputPath, int timeout) {
+    public void download(String url, String outputPath, int currentThread, int timeout) {
         FileOutputStream outputStream = null;
         BufferedInputStream inputStream = null;
         if (StringUtils.isBlank(url) || url.indexOf(".") == -1) {
@@ -91,7 +91,7 @@ public class HttpDownloader {
                     String percent = df.format(temp) + "%";
                     String loaded = df.format((double) total / (1024 * 1024));
                     String remaind = df.format((double) (contentLength - total) / (1024 * 1024));
-                    String process = "正在下载：" + filename + "   进度：" + percent + "   总大小：" + size + "MB   已下载：" + loaded + "MB" + "   剩余：" + remaind + "MB";
+                    String process = "线程" + currentThread + "正在下载：" + filename + "   进度：" + percent + "   总大小：" + size + "MB   已下载：" + loaded + "MB" + "   剩余：" + remaind + "MB";
 
                     // 速度 = 下载量 / 时间差（耗时）
                     String unit = "";
@@ -158,6 +158,7 @@ public class HttpDownloader {
 
     /**
      * 下载文件到本地
+     *
      * @param url
      * @param filename
      * @param outputPath

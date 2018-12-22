@@ -30,7 +30,7 @@ public class DownloadTask implements Runnable {
         try {
             System.out.println("线程" + taskNum + "正在下载：" + name);
             HttpDownloader httpDownloader = new HttpDownloader();
-            httpDownloader.download(url, outputPath, 30000);
+            httpDownloader.download(url, outputPath, taskNum, 30000);
             System.out.println("线程 " + taskNum + "下载完毕");
         } catch (Exception e) {
             e.printStackTrace();

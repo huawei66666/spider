@@ -5,6 +5,6 @@ import java.util.concurrent.Executors;
 
 public class ThreadHelper {
 
-	public final static ExecutorService THREAD_POOL = Executors.newFixedThreadPool(3);
+	public final static ExecutorService THREAD_POOL = Executors.newFixedThreadPool(5);
 
 }
