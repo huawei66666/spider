@@ -4,6 +4,7 @@ import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.huawei.spider.center.beans.UrlInfoBo;
 import com.huawei.spider.center.parsers.HappyParser;
 import com.huawei.spider.center.parsers.HappyParserV2;
+import com.huawei.spider.center.parsers.HappyParserV3;
 import com.huawei.spider.center.thread.DownloadTask;
 import com.huawei.spider.center.thread.MultiThreadDownloadTask;
 import com.huawei.spider.center.utils.ThreadHelper;
@@ -24,9 +25,17 @@ public class Spider {
 //        testSpider();
 //        testMultiTreadDownloader();
 //        executeFixedRate();
-        testSpider2();
+        testSpider3();
     }
 
+    public static void testSpider3() {
+        try {
+            HappyParserV3 parser = new HappyParserV3();
+            parser.parseFavorite();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void testSpider2() {
         try {

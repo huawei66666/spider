@@ -32,6 +32,11 @@ public class HappyParserV3 {
      */
     public Map<String, String> urlPool = new HashMap<>();
 
+    /**
+     * 域名
+     */
+    public static String domain = "http://dcdiban.com";
+
     public HappyParserV3() {
     }
 
@@ -48,22 +53,10 @@ public class HappyParserV3 {
         try {
             System.out.println("链接开始提取...");
 
-            String domain = "http://dcdiban.com";
-            Document doc = Jsoup.parse(new URL(domain).openStream(), "gb2312", domain);
-            Elements elements = doc.select(".movie_list ul li a:has(img)");
-            String info = "";
-            for (Element a : elements) {
-                String href = a.attr("href");
-                String url = getFavoriteNewDownloadUrl(domain + href);
-                if (StringUtils.isNoneBlank(url)) {
-                    System.out.println(url);
-                    info += " downloadUrl: " + url + "\n";
-                    writeToUrlPool(url);
+            String startUrl = "http://dcdiban.com/vidol/index6407.html?6407-0-0";
 
-
-
-                }
-            }
+            Document doc = Jsoup.parse(new URL(startUrl).openStream(), "gb2312", startUrl);
+            recrution(doc, 2);
             System.out.println("链接提取完成！一共提取" + this.urlPool.size() + "个文件！");
             return this.urlPool;
         } catch (Exception e) {
@@ -71,6 +64,66 @@ public class HappyParserV3 {
         }
         return null;
     }
+
+    /**
+     * 递归
+     *
+     * @param doc
+     * @param level 层数
+     * @throws Exception
+     */
+    public void recrution(Document doc, Integer level) throws Exception {
+        if (doc != null && level > 0) {
+            Elements elements = doc.select(".movie_list ul li a:has(img)");
+            for (Element a : elements) {
+                String href = a.attr("href");
+                if (StringUtils.isNoneBlank(href)) {
+                    Document episodeDoc = Jsoup.parse(new URL(domain + href).openStream(), "gb2312", domain + href);
+                    if (episodeDoc != null) {
+                        String episodeHref = episodeDoc.select(".film_bar ul li a").get(0).attr("href");
+                        String videourl = domain + episodeHref;
+                        Document videoDoc = Jsoup.parse(new URL(videourl), 30000);
+                        if (videoDoc != null) {
+                            Elements scripts = videoDoc.select("script[src^='/playdata']");
+                            String js = domain + scripts.attr("src");
+                            URL u = new URL(js);
+                            InputStream ism = u.openStream();
+                            BufferedInputStream bf = new BufferedInputStream(ism);
+                            byte[] bytes = new byte[1024];
+                            int len = bf.read(bytes);
+                            StringBuffer sb = new StringBuffer();
+                            while (len != -1) {
+                                len = bf.read(bytes);
+                                String str = new String(bytes, "utf-8");
+                                sb.append(str.trim());
+                            }
+                            String s = sb.toString();
+                            System.out.println(s);
+//                            if (StringUtils.isNoneBlank(s)) {
+//                                if ((s.indexOf("https") != -1 || s.indexOf("http") != -1) && s.indexOf("$ckplayer") != -1) {
+//                                    s = s.substring(s.indexOf("https"), s.indexOf("$ckplayer"));
+//                                    System.out.println(s);
+//                                    writeToUrlPool(s);
+//                                }
+//                            }
+
+                            if (StringUtils.isNoneBlank(s)) {
+                                if (s.indexOf("urlinfo") != -1) {
+                                    s = s.substring(0, s.indexOf("urlinfo"));
+                                }
+                            }
+
+                            level--;// 层数减一
+                            recrution(videoDoc, level);
+                        } else {
+                            System.out.println("没有获取到地址");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     /**
      * 写入地址池，去重
@@ -104,37 +157,7 @@ public class HappyParserV3 {
 //        String url = "http://dcdiban.com/" + "view/index5880.html";
         if (StringUtils.isNoneBlank(url)) {
 //            Document doc = Jsoup.parse(new URL(url), 30000);
-            Document doc = Jsoup.parse(new URL(url).openStream(), "gb2312", url);
-            if (doc != null) {
-                String href = doc.select(".film_bar ul li a").get(0).attr("href");
-                String videourl = "http://dcdiban.com" + href;
-                Document video = Jsoup.parse(new URL(videourl), 30000);
-////                        System.out.println(video.toString());
-                if (video != null) {
-                    Elements scripts = video.select("script[src^='/playdata']");
-                    String js = "http://dcdiban.com" + scripts.attr("src");
-                    URL u = new URL(js);
-                    InputStream ism = u.openStream();
-                    BufferedInputStream bf = new BufferedInputStream(ism);
-                    byte[] bytes = new byte[1024];
-                    int len = bf.read(bytes);
-                    StringBuffer sb = new StringBuffer();
-                    while (len != -1) {
-                        len = bf.read(bytes);
-                        String str = new String(bytes, "utf-8");
-                        sb.append(str.trim());
-                    }
-                    String s = sb.toString();
-                    if (StringUtils.isNoneBlank(s)) {
-                        if (s.indexOf("https") != -1 && s.indexOf("$ckplayer") != -1) {
-                            s = s.substring(s.indexOf("https"), s.indexOf("$ckplayer"));
-                            return s;
-                        }
-                    }
-                } else {
-                    System.out.println("没有获取到地址");
-                }
-            }
+
         }
 
         return "";
