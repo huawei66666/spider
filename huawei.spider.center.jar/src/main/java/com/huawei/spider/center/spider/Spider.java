@@ -11,6 +11,7 @@ import com.huawei.spider.center.utils.ThreadHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 
 /**
@@ -28,15 +29,31 @@ public class Spider {
         testSpider3();
     }
 
+    /**
+     * 下载猜我喜欢
+     */
     public static void testSpider3() {
         try {
+            String outputPath = "/mydoc/videos/a/b/new";
+
             HappyParserV3 parser = new HappyParserV3();
-            parser.parseFavorite();
+            List<UrlInfoBo> urls = parser.parseFavorite(null, 2);
+            if (CollectionUtils.isNotEmpty(urls)) {
+                ExecutorService pool = ThreadHelper.THREAD_POOL;
+                for (int i = 0; i < urls.size(); i++) {
+                    UrlInfoBo bo = urls.get(i);
+                    pool.submit(new DownloadTask(i + 1, bo.getName(), bo.getUrl(), outputPath));
+                }
+                pool.shutdown();// 线程执行完后停止
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * 下载最新电影
+     */
     public static void testSpider2() {
         try {
             // 本地链接存放地址

@@ -65,25 +65,44 @@ public class CallJsTest {
         try {
             se.eval(js);
             Object json = se.getContext().getAttribute("VideoListJson");// 获取变量值
-            System.out.println(json);
             if (json instanceof Map) {
                 Map<String, Map<String, Object>> map = (Map<String, Map<String, Object>>) json;
                 if (map != null && map.size() > 0) {
                     for (Map<String, Object> map1 : map.values()) {
-//                        for(Object o : map1.values()) {
-//                            if(o instanceof Map) {
-//                                Map<String, String> map2 = (Map<String, String>) o;
-//                                for(String s : map2.values()) {
-//                                    System.out.println(s);
-//                                }
-//                            }
-//                        }
-
-                        System.out.println(map1.get("0"));
-                        System.out.println(map1.get("1"));
+                        String separator = "";
+                        for (Object o : map1.values()) {
+                            if (o instanceof String) {
+                                separator = (String) o;
+                            }
+                            if (separator.toLowerCase().indexOf("ckplayer") != -1 && o instanceof Map) {
+                                Map<String, String> map2 = (Map<String, String>) o;
+                                for (String s : map2.values()) {
+                                    if (StringUtils.isNoneBlank(s) && (s.indexOf("http") != -1 || s.indexOf("https") != -1) && s.indexOf(".mp4") != -1) {
+                                        if (s.indexOf("$ckplayer") != -1) {
+                                            if (s.indexOf("https:") != -1) {
+                                                s = s.substring(s.indexOf("https"), s.indexOf("$ckplayer"));
+                                            }
+                                            if (s.indexOf("http:") != -1) {
+                                                s = s.substring(s.indexOf("http"), s.indexOf("$ckplayer"));
+                                            }
+                                        } else {
+                                            s = s.replace("$", "");
+                                            if (s.indexOf("https:") != -1) {
+                                                s = s.substring(s.indexOf("https"));
+                                            }
+                                            if (s.indexOf("http:") != -1) {
+                                                s = s.substring(s.indexOf("http"));
+                                            }
+                                        }
+                                        if ((s.startsWith("http://") || s.startsWith("https://")) && s.endsWith(".mp4")) {
+                                            System.out.println(s);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-
             }
         } catch (Exception e) {
             e.printStackTrace();
