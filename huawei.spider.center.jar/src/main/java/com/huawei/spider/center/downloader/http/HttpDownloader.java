@@ -33,7 +33,7 @@ public class HttpDownloader {
         FileOutputStream outputStream = null;
         BufferedInputStream inputStream = null;
         if (StringUtils.isBlank(url) || url.indexOf(".") == -1) {
-            System.out.println("无效的地址");
+            System.out.println(url + " 无效的地址");
             return;
         }
         if (StringUtils.isBlank(outputPath)) {// 若输出地址为空，拿默认存放路径
@@ -50,12 +50,12 @@ public class HttpDownloader {
             connection.setReadTimeout(timeout);
             connection.connect();
             if (connection.getResponseCode() != 200) {// 200:请求资源成功
-                System.out.println("资源请求失败, 错误码：" + connection.getResponseCode());
+                System.out.println(url + " 资源请求失败, 错误码：" + connection.getResponseCode());
                 return;
             }
             long contentLength = connection.getContentLengthLong();
             if (contentLength == 0 || contentLength == -1) {
-                System.out.println("文件无效或不存在");
+                System.out.println(url + " 文件无效或不存在");
                 return;
             }
 
@@ -118,20 +118,20 @@ public class HttpDownloader {
             outputStream.flush();
 
             if (contentLength != file.length()) {
-                System.out.println(filename + " 下载失败，文件无效");
+                System.out.println(filename + " 下载失败，文件无效，地址：" + url);
                 file.delete();
                 return;
             }
             System.out.println(filename + " 下载完成！下载后文件总大小：" + df.format((double) file.length() / (1024 * 1024)) + "MB");
         } catch (FileNotFoundException fe) {
-            System.out.println(filename + " 地址无效，文件不存在！");
+            System.out.println(url + " 地址无效，文件不存在！");
             logger.error("VIDEO URL：" + url + " FILENAME:" + filename + " DOWNLOAD FAILED!! ");
             if (file.exists()) {
                 file.delete();
             }
 //            fe.printStackTrace();
         } catch (Exception e) {
-            System.out.println("无法下载 " + filename + "   原因：" + e.getMessage());
+            System.out.println("无法下载 " + filename + "   URL地址：" + url + "   原因：" + e.getMessage());
             logger.error("VIDEO URL：" + url + " FILENAME:" + filename + " DOWNLOAD FAILED!! ");
             if (file.exists()) {
                 file.delete();

@@ -19,7 +19,7 @@ public class HttpDownloaderTest {
 //        String url = "https://dns.whbosscar.com/20180818/1/1/xml/91_dfd3194527d54cb29607e713168e01e4.mp4";
 //        String url = "https://dns.whbosscar.com/20180818/1/1/xml/91_be38cb925a9a441a92e34308e23204ec.mp4";
 
-        String url = "https://letv.cdn.changba.com/userdata/video/674300DDAFEE78569C33DC5901307461.mp4";
+        String url = "ftp://ygdy8:ygdy8@yg45.dydytt.net:7413/阳光电影www.ygdy8.com.库尔斯克.BD.720p.英语中字.mkv";
 //        String outputPath = "D:/videos";
 //        String outputPath = "/Users/laihuawei/downloads";
         String outputPath = "/mydoc/videos";
@@ -39,10 +39,11 @@ public class HttpDownloaderTest {
 
     @Test
     public void testDownloaderJs() throws Exception {
+        String s = "ftp://ygdy8:ygdy8@yg45.dydytt.net:7413/阳光电影www.ygdy8.com.库尔斯克.BD.720p.英语中字.mkv";
         String url = "http://cmsstatic.dataoke.com//js/scrollTop2.js?v=201810101200";
         String outputPath = "/media/wei/d/spider/lamadaogou/js";
         HttpDownloader httpDownloader = new HttpDownloader();
-        httpDownloader.download(url, outputPath, 1, 30000);
+        httpDownloader.download(s, outputPath, 1, 30000);
     }
 
 }

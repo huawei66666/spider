@@ -37,6 +37,7 @@ public class Spider {
             String outputPath = "/mydoc/videos/a/b/new";
 
             HappyParserV3 parser = new HappyParserV3();
+            String startUrl = "http://dcdiban.com/vidol/index4905.html?4905-0-0";
             List<UrlInfoBo> urls = parser.parseFavorite(null, 2);
             if (CollectionUtils.isNotEmpty(urls)) {
                 ExecutorService pool = ThreadHelper.THREAD_POOL;
