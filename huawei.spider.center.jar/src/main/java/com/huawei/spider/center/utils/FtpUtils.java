@@ -28,8 +28,10 @@ public class FtpUtils {
         ftpClient.setControlEncoding("utf-8");
         try {
             System.out.println("connecting...ftp服务器:" + this.hostname + ":" + this.port);
-            ftpClient.connect(hostname, port); //连接ftp服务器
-            ftpClient.login(username, password); //登录ftp服务器
+            if(!ftpClient.isConnected()) {
+                ftpClient.connect(hostname, port); //连接ftp服务器
+                ftpClient.login(username, password); //登录ftp服务器
+            }
             int replyCode = ftpClient.getReplyCode(); //是否成功登录服务器
             if (!FTPReply.isPositiveCompletion(replyCode)) {
                 System.out.println("connect failed...ftp服务器:" + this.hostname + ":" + this.port);
