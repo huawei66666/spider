@@ -42,7 +42,29 @@ public class BoBoParser {
 
             String domain = "http://dazhizhaoshang.com/";
             Document doc = Jsoup.connect(domain).get();
-            System.out.println(doc);
+//            System.out.println(doc);
+            if (doc != null) {
+                String scripts = doc.select("script").attr("src");
+                System.out.println(scripts);
+                if (scripts.indexOf("fuck/ip") != -1) {
+                    URL u = new URL(scripts);
+                    InputStream ism = u.openStream();
+                    BufferedInputStream bf = new BufferedInputStream(ism);
+                    byte[] bytes = new byte[1024];
+                    int len = bf.read(bytes);
+                    StringBuffer sb = new StringBuffer();
+                    while (len != -1) {
+                        len = bf.read(bytes);
+                        String str = new String(bytes, "utf-8");
+                        sb.append(str);
+                    }
+                    String s = sb.toString();
+                    System.out.println(sb);
+
+
+                }
+
+            }
 
 //            Elements elements = doc.select(".caoporn_Maincontentfive .index_videoshow a");
 //            String info = "";
