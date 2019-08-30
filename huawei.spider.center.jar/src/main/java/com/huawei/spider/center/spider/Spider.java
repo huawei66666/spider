@@ -38,7 +38,7 @@ public class Spider {
 
             HappyParserV3 parser = new HappyParserV3();
             String startUrl = "http://dcdiban.com/vidol/index4905.html?4905-0-0";
-            List<UrlInfoBo> urls = parser.parseFavorite(null, 2);
+            List<UrlInfoBo> urls = parser.parseFavorite(startUrl, 2);
             if (CollectionUtils.isNotEmpty(urls)) {
                 ExecutorService pool = ThreadHelper.THREAD_POOL;
                 for (int i = 0; i < urls.size(); i++) {
