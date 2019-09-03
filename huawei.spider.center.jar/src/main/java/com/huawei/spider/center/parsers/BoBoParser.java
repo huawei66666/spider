@@ -10,6 +10,8 @@ import org.jsoup.select.Elements;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created on 2019/8/29.
@@ -92,6 +94,8 @@ public class BoBoParser {
 
                 // 写入文件
                 if (StringUtils.isNotBlank(urls) && StringUtils.isNotBlank(local)) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+                    local = "/mydoc/m3u8/m3u8-" + sdf.format(new Date()) + ".txt";
                     FileUtil.writeToFile(local, urls);
                 }
             }
