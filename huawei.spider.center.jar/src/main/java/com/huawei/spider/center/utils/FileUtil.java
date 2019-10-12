@@ -48,6 +48,7 @@ public class FileUtil {
      * @param content
      */
     public static void writeToFile(String localPath, String content) {
+        File file = null;
         try {
             if (StringUtils.isEmpty(localPath)) {
                 return;
@@ -57,7 +58,7 @@ public class FileUtil {
                 logger.error("文件内容为空！");
                 return;
             }
-            File file = new File(localPath);
+            file = new File(localPath);
             File parent = new File(file.getParent());// 输出的文件
             parent.mkdirs();
 
@@ -65,14 +66,14 @@ public class FileUtil {
                 file.createNewFile();
             }
 
-            System.out.println("正在写入文件...");
+            System.out.println("正在写入文件：" + file.getName() + "...");
 //            PrintStream printStream = new PrintStream(new FileOutputStream(file), true, "UTF-8");
             PrintStream printStream = new PrintStream(new FileOutputStream(file));
             printStream.print(content);
             printStream.close();
-            System.out.println("写入文件完成！");
+            System.out.println("写入文件：" + file.getName() + "完成！");
         } catch (Exception e) {
-            logger.error("内容写到文件失败！", e);
+            logger.error("内容写到文件：" + file.getName() + "失败！", e);
             e.printStackTrace();
         }
     }
