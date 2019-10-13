@@ -249,17 +249,20 @@ public class BoBoParser {
                 File[] files = pathFile.listFiles();
                 for (File file : files) {
                     if (file.exists() && file.isFile()) {
-                        BufferedReader reader = new BufferedReader(new FileReader(file));
-                        String line;
-                        while (StringUtils.isNoneBlank(line = reader.readLine())) {
-                            if (line.indexOf("https") != -1) {
-                                String filename = line.substring(line.lastIndexOf("/") + 1, line.lastIndexOf("."));
-                                if (!names.contains(filename)) {
-                                    // ffmpeg -i https://m3u8.cdnpan.com/lr8STPI1.m3u8 -vcodec copy -acodec copy -absf aac_adtstoasc -bufsize 20000k /mydoc/videos/a/m3u8/lr8STPI1.mp4
-                                    String command = "ffmpeg -i https://m3u8.cdnpan.com/" + filename + ".m3u8 -vcodec copy -acodec copy -absf aac_adtstoasc -bufsize 20000k /mydoc/videos/a/m3u8/" + filename + ".mp4";
-                                    commands += command + "\n";
-                                    count++;
-                                    System.out.println(command);
+                        if(file.getName().startsWith("m3u8") && file.getName().endsWith(".txt")) {
+//                            System.out.println(file.getName());
+                            BufferedReader reader = new BufferedReader(new FileReader(file));
+                            String line;
+                            while (StringUtils.isNoneBlank(line = reader.readLine())) {
+                                if (line.indexOf("https") != -1) {
+                                    String filename = line.substring(line.lastIndexOf("/") + 1, line.lastIndexOf("."));
+                                    if (!names.contains(filename)) {
+                                        // ffmpeg -i https://m3u8.cdnpan.com/lr8STPI1.m3u8 -vcodec copy -acodec copy -absf aac_adtstoasc -bufsize 20000k /mydoc/videos/a/m3u8/lr8STPI1.mp4
+                                        String command = "ffmpeg -i https://m3u8.cdnpan.com/" + filename + ".m3u8 -vcodec copy -acodec copy -absf aac_adtstoasc -bufsize 20000k /mydoc/videos/a/m3u8/" + filename + ".mp4";
+                                        commands += command + "\n";
+                                        count++;
+                                        System.out.println(command);
+                                    }
                                 }
                             }
                         }
