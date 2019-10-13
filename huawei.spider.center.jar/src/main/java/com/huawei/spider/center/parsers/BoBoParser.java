@@ -233,14 +233,17 @@ public class BoBoParser {
                 for (File fi : files) {
                     if (!fi.isHidden()) {
                         String filename = fi.getName();
-                        filename = filename.substring(0, filename.lastIndexOf("."));
+                        if(filename.indexOf(".") != -1) {
+                            filename = filename.substring(0, filename.lastIndexOf("."));
 //                        System.out.println(filename);
-                        names.add(filename);
+                            names.add(filename);
+                        }
                     }
                 }
             }
 
             String commands = "";
+            int count = 0;
             File pathFile = new File(filepath);
             if (pathFile.exists() && pathFile.isDirectory()) {
                 File[] files = pathFile.listFiles();
@@ -255,6 +258,7 @@ public class BoBoParser {
                                     // ffmpeg -i https://m3u8.cdnpan.com/lr8STPI1.m3u8 -vcodec copy -acodec copy -absf aac_adtstoasc -bufsize 20000k /mydoc/videos/a/m3u8/lr8STPI1.mp4
                                     String command = "ffmpeg -i https://m3u8.cdnpan.com/" + filename + ".m3u8 -vcodec copy -acodec copy -absf aac_adtstoasc -bufsize 20000k /mydoc/videos/a/m3u8/" + filename + ".mp4";
                                     commands += command + "\n";
+                                    count++;
                                     System.out.println(command);
                                 }
                             }
@@ -264,6 +268,7 @@ public class BoBoParser {
             }
 
             // 写入文件
+            System.out.println("命令总数量为：" + count);
             if (StringUtils.isNotBlank(commands)) {
                 String localpath = "/mydoc/m3u8/command.txt";
                 FileUtil.writeToFile(localpath, commands);
