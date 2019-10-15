@@ -4,9 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 功能：文件工具类
@@ -78,5 +78,40 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 删除文件夹下的空文件
+     *
+     * @param folder
+     */
+    public static void deleteEmptyFiles(String folder) {
+        try {
+            List<File> fileList = new ArrayList<>();
+            if (StringUtils.isNoneBlank(folder)) {
+                File f = new File(folder);
+                if (f.exists() && f.isDirectory()) {
+                    File[] files = f.listFiles();
+                    for (File fi : files) {
+                        if (!fi.isHidden()) {
+                            BufferedReader reader = new BufferedReader(new FileReader(fi));
+//                            System.out.println("reader lenth: " + reader.readLine());
+//                            System.out.println("length: " + fi.length());
+                            if (fi.length() == 0 || StringUtils.isBlank(reader.readLine())) {
+                                fi.delete();
+                                fileList.add(fi);
+                            }
+                        }
+                    }
+                }
+            }
+            System.out.println("文件删除完成！一共删除了：" + fileList.size() + "个文件！");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        String filepath = "/mydoc/videos/a/m3u8";
+        deleteEmptyFiles(filepath);
+    }
 
 }
