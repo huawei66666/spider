@@ -6,6 +6,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.util.DigestUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -118,6 +119,8 @@ public class BoBoParser {
      * @throws Exception
      */
     public static void parse2() {
+        List<String> urlList = new ArrayList<>();
+        String urls = "";
         try {
             System.out.println("链接开始提取...");
 
@@ -125,7 +128,6 @@ public class BoBoParser {
             Document doc = Jsoup.connect(domain).get();
 //            System.out.println(doc);
             if (doc != null) {
-                String urls = "";
                 String scripts = doc.select("script").attr("src");
 //                System.out.println("========= js地址: ======>>>" + scripts);
                 if (scripts.indexOf("fuck/ip") != -1) {
@@ -180,10 +182,11 @@ public class BoBoParser {
                                                                 for (Element e : playerscripts) {
                                                                     if (e.toString().indexOf("player_data") != -1) {
                                                                         String m3u8 = e.toString();
-                                                                        if (StringUtils.isNotBlank(m3u8) && m3u8.indexOf("https") != -1) {
+                                                                        if (StringUtils.isNotBlank(m3u8) && m3u8.indexOf("https") != -1 && !urlList.contains(m3u8)) {
                                                                             m3u8 = m3u8.substring(m3u8.indexOf("https"), m3u8.indexOf(".m3u8") + 5);
                                                                             m3u8 = m3u8.replaceAll("\\\\", "");
                                                                             urls += m3u8 + "\n";
+                                                                            urlList.add(m3u8);
                                                                             System.out.println("===== 已提取视频源地址： ====>>> " + m3u8);
                                                                         }
                                                                     }
@@ -203,18 +206,20 @@ public class BoBoParser {
                         }
                     }
                 }
-
-                // 写入文件
-                if (StringUtils.isNotBlank(urls) && StringUtils.isNotBlank(local)) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-                    local = "/mydoc/m3u8/m3u8-" + sdf.format(new Date()) + ".txt";
-                    FileUtil.writeToFile(local, urls);
-                }
             }
-//
-            System.out.println("链接提取完成！");
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            System.out.println("一共提取了：" + urlList.size() + "个链接！");
+
+            // 写入文件
+            if (StringUtils.isNotBlank(urls) && StringUtils.isNotBlank(local)) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+                local = "/mydoc/m3u8/m3u8-" + sdf.format(new Date()) + ".txt";
+                FileUtil.writeToFile(local, urls);
+            }
+
+            System.out.println("链接提取完成！");
         }
     }
 
@@ -233,7 +238,7 @@ public class BoBoParser {
                 for (File fi : files) {
                     if (!fi.isHidden()) {
                         String filename = fi.getName();
-                        if(filename.indexOf(".") != -1) {
+                        if (filename.indexOf(".") != -1) {
                             filename = filename.substring(0, filename.lastIndexOf("."));
 //                        System.out.println(filename);
                             names.add(filename);
@@ -242,6 +247,7 @@ public class BoBoParser {
                 }
             }
 
+            List<String> commandList = new ArrayList<>();
             String commands = "";
             int count = 0;
             File pathFile = new File(filepath);
@@ -249,18 +255,27 @@ public class BoBoParser {
                 File[] files = pathFile.listFiles();
                 for (File file : files) {
                     if (file.exists() && file.isFile()) {
-                        if(file.getName().startsWith("m3u8") && file.getName().endsWith(".txt")) {
+                        if (file.getName().startsWith("m3u8") && file.getName().endsWith(".txt")) {
 //                            System.out.println(file.getName());
                             BufferedReader reader = new BufferedReader(new FileReader(file));
                             String line;
                             while (StringUtils.isNoneBlank(line = reader.readLine())) {
                                 if (line.indexOf("https") != -1) {
-                                    String filename = line.substring(line.lastIndexOf("/") + 1, line.lastIndexOf("."));
-                                    if (!names.contains(filename)) {
+                                    line = line.trim();
+                                    String filename = "";
+                                    if (line.indexOf("playlist") == -1) {
+                                        filename = line.substring(line.lastIndexOf("/") + 1, line.lastIndexOf("."));
+                                    } else {
+//                                        filename = DigestUtils.md5DigestAsHex(line.getBytes("utf-8"));
+                                        filename = line.substring(0, line.lastIndexOf("/"));
+                                        filename = filename.substring(filename.lastIndexOf("/") + 1);
+                                    }
+                                    if (StringUtils.isNoneBlank(filename) && !names.contains(filename) && !commandList.contains(line)) {// 去重复
                                         // ffmpeg -i https://m3u8.cdnpan.com/lr8STPI1.m3u8 -vcodec copy -acodec copy -absf aac_adtstoasc -bufsize 20000k /mydoc/videos/a/m3u8/lr8STPI1.mp4
-                                        String command = "ffmpeg -i https://m3u8.cdnpan.com/" + filename + ".m3u8 -vcodec copy -acodec copy -absf aac_adtstoasc -bufsize 20000k /mydoc/videos/a/m3u8/" + filename + ".mp4";
+                                        String command = "ffmpeg -i " + line + " -vcodec copy -acodec copy -absf aac_adtstoasc -bufsize 20000k /mydoc/videos/a/m3u8/" + filename + ".mp4";
                                         commands += command + "\n";
                                         count++;
+                                        commandList.add(line);
                                         System.out.println(command);
                                     }
                                 }
