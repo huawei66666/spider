@@ -1,6 +1,6 @@
 package com.huawei.spider.center.parsers;
 
-import com.huawei.spider.center.utils.FileUtil;
+import com.huawei.spider.center.utils.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -71,7 +71,7 @@ public class DygangJsoupParser {
                 html += print + "\n";
             }
 
-            FileUtil.writeToFile(html);
+            FileUtils.writeToFile(html);
         } catch (Exception e) {
             e.printStackTrace();
         }

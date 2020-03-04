@@ -1,12 +1,11 @@
 package com.huawei.spider.center.parsers;
 
-import com.huawei.spider.center.utils.FileUtil;
+import com.huawei.spider.center.utils.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.util.DigestUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -102,7 +101,7 @@ public class BoBoParser {
                 if (StringUtils.isNotBlank(urls) && StringUtils.isNotBlank(local)) {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
                     local = "/mydoc/m3u8/m3u8-" + sdf.format(new Date()) + ".txt";
-                    FileUtil.writeToFile(local, urls);
+                    FileUtils.writeToFile(local, urls);
                 }
             }
 //
@@ -216,7 +215,7 @@ public class BoBoParser {
             if (StringUtils.isNotBlank(urls) && StringUtils.isNotBlank(local)) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
                 local = "/mydoc/m3u8/m3u8-" + sdf.format(new Date()) + ".txt";
-                FileUtil.writeToFile(local, urls);
+                FileUtils.writeToFile(local, urls);
             }
 
             System.out.println("链接提取完成！");
@@ -289,7 +288,7 @@ public class BoBoParser {
             System.out.println("命令总数量为：" + count);
             if (StringUtils.isNotBlank(commands)) {
                 String localpath = "/mydoc/m3u8/command.txt";
-                FileUtil.writeToFile(localpath, commands);
+                FileUtils.writeToFile(localpath, commands);
             }
         } catch (Exception e) {
             e.printStackTrace();

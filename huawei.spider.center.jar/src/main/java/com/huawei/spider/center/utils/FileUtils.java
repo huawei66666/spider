@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,9 +13,9 @@ import java.util.List;
  * 功能：文件工具类
  * 日期：2018年06月2018/6/25日 16:41
  */
-public class FileUtil {
+public class FileUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
     /**
      * 写到文件
@@ -40,6 +41,33 @@ public class FileUtil {
             logger.error("内容写到文件失败！", e);
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 写入文件
+     *
+     * @param localPath
+     * @param content
+     */
+    public static void writeToFile2(String localPath, String content) {
+        if (StringUtils.isEmpty(localPath) || StringUtils.isEmpty(content)) return;
+        try {
+            File file = new File(localPath);
+            File parent = new File(file.getParent());
+            if (!parent.exists()) {
+                parent.mkdirs();
+            }
+            if (!file.exists() || !file.isDirectory()) {
+                file.createNewFile();
+            }
+            FileWriter writer = new FileWriter(file);
+            writer.write(content);
+            writer.flush();
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -109,9 +137,48 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 读文件
+     * @param localPath
+     */
+    public static void readFile(String localPath) {
+        if (StringUtils.isEmpty(localPath)) return;
+        try {
+            File file = new File(localPath);
+            if (!file.exists()) return;
+
+            // 读文件方式一：
+//            Reader reader = new FileReader(file);
+//            char[] chars = new char[1024];
+//            int len = reader.read(chars);
+//            System.out.println(new String(chars, 0, len));
+
+            // 读文件方式二：
+//            BufferedReader reader = new BufferedReader(new FileReader(file));
+//            for(String line;StringUtils.isNoneBlank(line = reader.readLine());) {
+//                System.out.println(line);
+//            }
+
+            // 读文件方式二：
+            InputStream in = new FileInputStream(file);
+            byte[] bytes = new byte[in.available()];
+            in.read(bytes);
+            System.out.println(new String(bytes));
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
-        String filepath = "/mydoc/videos/a/m3u8";
-        deleteEmptyFiles(filepath);
+//        String filepath = "/mydoc/videos/a/m3u8";
+//        deleteEmptyFiles(filepath);
+
+        String filepath2 = "/mydoc/test/a/b/c/test.txt";
+        String s = "哇啊无哇无哈哈哈\n 呵呵呵呵呵呵呵呵";
+        writeToFile2(filepath2, s);
+//        readFile(filepath2);
+
     }
 
 }

@@ -1,6 +1,6 @@
 package com.huawei.spider.center.parsers;
 
-import com.huawei.spider.center.utils.FileUtil;
+import com.huawei.spider.center.utils.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -72,7 +72,7 @@ public class DyttJsoupParser {
             }
 
             String localPath = "/mydoc/dytt.txt";
-            FileUtil.writeToFile(localPath, html);
+            FileUtils.writeToFile(localPath, html);
         } catch (Exception e) {
             e.printStackTrace();
         }

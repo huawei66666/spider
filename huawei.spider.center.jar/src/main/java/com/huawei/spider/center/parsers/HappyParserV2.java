@@ -1,7 +1,7 @@
 package com.huawei.spider.center.parsers;
 
 import com.huawei.spider.center.beans.UrlInfoBo;
-import com.huawei.spider.center.utils.FileUtil;
+import com.huawei.spider.center.utils.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -58,7 +58,7 @@ public class HappyParserV2 {
                 }
             }
             if (StringUtils.isNotBlank(this.localFilePath)) {
-                FileUtil.writeToFile(this.localFilePath, info);// 写入文件
+                FileUtils.writeToFile(this.localFilePath, info);// 写入文件
             }
             System.out.println("链接提取完成！一共提取" + result.size() + "个文件！");
             return result;

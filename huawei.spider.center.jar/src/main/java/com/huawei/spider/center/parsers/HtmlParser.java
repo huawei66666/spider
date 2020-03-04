@@ -3,7 +3,7 @@ package com.huawei.spider.center.parsers;
 import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.huawei.spider.center.downloader.http.HttpDownloader;
 import com.huawei.spider.center.utils.CssParserUtil;
-import com.huawei.spider.center.utils.FileUtil;
+import com.huawei.spider.center.utils.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -40,7 +40,7 @@ public class HtmlParser {
                 System.out.println(doc.toString());
 //
 //                // html文件
-                FileUtil.writeToFile(localPath + "/user_cat_sub.html", doc.toString());
+                FileUtils.writeToFile(localPath + "/user_cat_sub.html", doc.toString());
 
 //                // css文件
                 getCssFile(doc);

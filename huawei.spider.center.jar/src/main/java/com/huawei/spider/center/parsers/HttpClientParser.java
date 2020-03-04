@@ -1,6 +1,6 @@
 package com.huawei.spider.center.parsers;
 
-import com.huawei.spider.center.utils.FileUtil;
+import com.huawei.spider.center.utils.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -57,7 +57,7 @@ public class HttpClientParser {
                 String content = EntityUtils.toString(entity);
                 if (StringUtils.isNotEmpty(content)) {
                     content = new String(content.getBytes("ISO-8859-1"), "GBK");
-                    FileUtil.writeToFile(content);
+                    FileUtils.writeToFile(content);
                     System.out.println(content);
                 }
                 EntityUtils.consume(entity);
