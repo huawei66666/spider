@@ -14,6 +14,10 @@ public class Reflex {
         this.s = s;
     }
 
+    public void mm(int a) {
+        System.out.println("mm invoked! a=" + a);
+    }
+
     public static int getA() {
         return a;
     }

@@ -2,6 +2,7 @@ package com.huawei.spider.center.utils;
 
 public class ThreadTest extends Thread {
 
+    @Override
     public void run() {
         System.out.println("线程开启！");
     }

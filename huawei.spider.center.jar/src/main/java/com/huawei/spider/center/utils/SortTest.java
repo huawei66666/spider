@@ -40,10 +40,11 @@ public class SortTest {
         for (int i = 0; i < array.length; i++) {
             int index = 0;
             for (int j = 0; j < array.length - i; j++) {
-                if (array[index] < array[j]) {
+                if (array[index] < array[j]) {// 循环一遍找出最大的数
                     index = j;
                 }
             }
+            // 放在数组末尾
             int temp = array[array.length - 1 - i];
             array[array.length - 1 - i] = array[index];
             array[index] = temp;
